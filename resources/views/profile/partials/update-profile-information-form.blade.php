@@ -25,6 +25,7 @@
             <x-form.label
                 for="name"
                 :value="__('Name')"
+                readonly
             />
 
             <x-form.input
@@ -34,6 +35,7 @@
                 class="block w-full"
                 :value="old('name', $user->name)"
                 required
+                disabled="true"
                 autofocus
                 autocomplete="name"
             />
@@ -54,6 +56,7 @@
                 class="block w-full"
                 :value="old('email', $user->email)"
                 required
+                disabled="true"
                 autocomplete="email"
             />
 
@@ -79,9 +82,9 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-button>
+            {{-- <x-button disabled="true">
                 {{ __('Save') }}
-            </x-button>
+            </x-button> --}}
 
             @if (session('status') === 'profile-updated')
                 <p

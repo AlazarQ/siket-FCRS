@@ -27,6 +27,22 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        // Check if the recordStaus is 'INAU' if so, logout the user
+        if (Auth::user()->recordStatus === 'INAU') {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect('/')->withErrors([
+                'email' => 'Your account is unauthorized. Please contact the administrator.',
+            ]);
+        }
+        // Check if the userStatus is 'NEW' if so, redirect to password change page
+        // Check if the userStatus is 'NEW' if so, redirect to password change page
+
+        if (Auth::user()->userStatus === 'NEW') {
+            return redirect()->route('password.change');
+        }
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
