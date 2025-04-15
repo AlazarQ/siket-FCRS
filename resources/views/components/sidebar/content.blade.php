@@ -5,19 +5,23 @@
             <x-icons.dashboard class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
         </x-slot>
     </x-sidebar.link>
+    @switch(auth()->user()->userRole)
+        @case('ADMIN')
+            <x-sidebar.dropdown title="Users" :active="Str::startsWith(request()->route()->uri(), 'users')">
+                <x-slot name="icon">
+                    <x-icons.users class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+                </x-slot>
 
-    <x-sidebar.dropdown title="Users" :active="Str::startsWith(request()->route()->uri(), 'users')">
-        <x-slot name="icon">
-            <x-icons.users class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
-        </x-slot>
+                <x-sidebar.sublink title="New User" href="{{ route('users.create') }}" :active="request()->routeIs('users.create')" />
 
-        <x-sidebar.sublink title="New User" href="{{ route('users.create') }}" :active="request()->routeIs('users.create')" />
+                <x-sidebar.sublink title="Manage User" href="{{ route('users.index') }}" :active="request()->routeIs('users.index')" />
 
-        <x-sidebar.sublink title="Manage User" href="{{ route('users.index') }}" :active="request()->routeIs('users.index')" />
+                <x-sidebar.sublink title="Auth/Reject User" href="{{ route('users.authOrReject') }}" :active="request()->routeIs('users.authOrReject')" />
+            </x-sidebar.dropdown>
+        @break
 
-        <x-sidebar.sublink title="Auth/Reject User" href="{{ route('users.authOrReject') }}" :active="request()->routeIs('users.authOrReject')" />
-    </x-sidebar.dropdown>
-
+        @default
+    @endswitch
     <x-sidebar.dropdown title="FCY Request" :active="Str::startsWith(request()->route()->uri(), 'fcy-request')">
         <x-slot name="icon">
             <x-icons.forex class="flex-shrink-0 w-6 h-6" aria-hidden="true" />

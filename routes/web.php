@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/fcy-request/authorize/{id}', [FCYRequestController::class, 'authorizeRequest'])->name('fcy-request.authorize');
     Route::get('/fcy-request/reject/{id}', [FCYRequestController::class, 'rejectRequest'])->name('fcy-request.reject');
 
-    // add the route for user menu for add, edit update appreove and so on 
+    // add the route for user menu for add, edit update approve and so on 
     Route::resource('users', UserController::class);
     Route::get('/usersList/unauthorized/list', [UserController::class, 'notAuthorizedUsersList'])
         ->name('users.authOrReject');
@@ -71,6 +71,13 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/password/change', [PasswordChangeController::class, 'store'])
         ->name('password.change.store');
+
+    /// user password reset routes 
+    Route::get('/users/{user}/resetUserPasswordView', [UserController::class, 'resetUserPasswordView'])
+        ->name('users.resetUserPasswordView');
+
+    Route::patch('/users/{user}/resetUserPasswordStore', [UserController::class, 'resetUserPasswordStore'])
+        ->name('users.resetUserPasswordStore');
 
     //// report routes
     //All Fcy Request lists

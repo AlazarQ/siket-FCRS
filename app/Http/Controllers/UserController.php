@@ -200,4 +200,34 @@ class UserController extends Controller
     {
         //
     }
+
+
+    //// function to reset user password
+
+    public function resetUserPasswordView(User $user) {
+        return view('users.resetUserPasswordView', compact('user'));
+    }
+    public function resetUserPasswordStore(Request $request, User $user)
+    {
+        try {
+            $request->validate([
+                'remark' => 'required',
+                'password' => 'required|min:6',
+            ]);
+
+            $data = $request->all();
+            $data['remark'] = $request->remark;
+            $data['password'] = Hash::make($request->password);
+            // $defaultPassword = '123456';
+            // $user->password = Hash::make($defaultPassword);
+        
+            $user->update($data);
+
+            return redirect()->route('users.index')->with('success', "<script>showNotification('User', 'Password reset successfully to default password','success')</script>");
+        } catch (\Exception $e) {
+            Log::error('Error resetting password: ' . $e->getMessage());
+            return redirect()->back()->with('error', "<script>showNotification('User', 'Password reset failed','error')</script>");
+        }
+    }
+    
 }
