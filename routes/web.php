@@ -6,6 +6,11 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\PasswordChangeController;
 
+use App\Exports\FcyRequestExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\FCY_Request;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -85,6 +90,16 @@ Route::middleware('auth')->group(function () {
         ->name('fcy-request.rejectedFcyRequests');
 
 
+    //// export reports route
+    Route::get('/fcy-request/export/excel', function () {
+        return Excel::download(new FcyRequestExport, 'fcy_requests.xlsx');
+    })->name('fcy.export.excel');
+
+    Route::get('/fcy-request/export/pdf', function () {
+        $data = FCY_Request::all();
+        $pdf = Pdf::loadView('fcy-request.export.export_pdf', ['allFcyRequest' => $data]);
+        return $pdf->download('fcy_requests.pdf');
+    })->name('fcy-request.export.pdf');
 
     //// error pages 
     Route::get('/unauthorized', function () {

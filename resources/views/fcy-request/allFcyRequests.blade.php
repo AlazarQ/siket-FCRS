@@ -14,12 +14,15 @@
             <p class="mt-3 mb-6 text-green-900/80 text-sm">
                 List Of Registered FCy Requests.
             </p>
-            {{-- <h1 class="text-2xl font-bold mb-4">Litigation Cases</h1> --}}
-            {{-- <div class="text-right">
-                <x-bladewind::button has_spinner="true" name="save-user" onclick="showButtonSpinner('.save-user')">
-                    <a href="{{ route('fcy-request.create') }}" class="btn btn-primary">New Request</a>
-                </x-bladewind::button>
-            </div><br> --}}
+            <div class="flex justify-end gap-4 mb-4">
+                <a href="{{ route('fcy.export.excel') }}">
+                    <x-bladewind::button type="secondary" icon="download">Export to Excel</x-bladewind::button>
+                </a>
+
+                <a href="{{ route('fcy.export.pdf') }}">
+                    <x-bladewind::button type="secondary" icon="file-text">Export to PDF</x-bladewind::button>
+                </a>
+            </div>
 
             <x-bladewind::table selectable="flase" divider="thin" name="branch_list" searchable="true" celled="false"
                 paginated="true" page_size="5" show_row_numbers="true" default_page="1"
