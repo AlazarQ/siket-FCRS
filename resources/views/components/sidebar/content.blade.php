@@ -34,7 +34,7 @@
         <x-sidebar.sublink title="Request Lists " href="{{ route('fcy-request.index') }}" :active="request()->routeIs('fcy-request.index')" />
     </x-sidebar.dropdown>
 
-    <x-sidebar.dropdown title="Reports" :active="Str::startsWith(request()->route()->uri(), '')">
+    <x-sidebar.dropdown title="Reports" :active="Str::startsWith(request()->route()->uri(), 'reports')">
         <x-slot name="icon">
             <x-icons.reports class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
         </x-slot>

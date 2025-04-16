@@ -65,30 +65,24 @@ class UserController extends Controller
             $user = User::create($data);
             $user->assignRole($request->userRole);
 
-            // Flash success notification
-            // session()->flash('notification', [
-            //     'title' => 'Registration Successful',
-            //     'message' => 'User registered successfully',
-            //     'type' => 'success'
-            // ]);
             return redirect()->route('users.index')->with('success', "<script>showNotification('User', 'User registered successfully','success')</script>");
 
-            // return redirect()->route('users.index')->with('success', 'User created successfully.');
+         
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation error: ' . json_encode($e->errors()));
             $errors=$e->errors();
             return redirect()->route('users.create')->with('error', "<script>showNotification('User', 'User Registration Failed. " . $e->getMessage() . "','error')</script>");
-            // return redirect()->back()->withErrors($e->errors())->withInput();
+           
         } catch (\Exception $e) {
             Log::error('Error creating user: ' . $e->getMessage());
-            // Flash error notification
+            
             session()->flash('notification', [
                 'title' => 'Registration Failed',
                 'message' => 'Failed to register user: ' . $e->getMessage(),
                 'type' => 'error'
             ]);
 
-            // return redirect()->back()->withInput();
+           
             return redirect()->route('users.create')->with('error', "<script>showNotification('User', 'User Registration Failed. " . $e->getMessage() . "','error')</script>");
         }
     }
@@ -218,8 +212,7 @@ class UserController extends Controller
             $data = $request->all();
             $data['remark'] = $request->remark;
             $data['password'] = Hash::make($request->password);
-            // $defaultPassword = '123456';
-            // $user->password = Hash::make($defaultPassword);
+            
         
             $user->update($data);
 

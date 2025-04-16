@@ -7,5 +7,10 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
+        
     ],
+    server: {
+        host: 'localhost', // Allow access from any device on the network
+        port: 9092,       // Ensure this is the port Vite is running on
+    },
 });

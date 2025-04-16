@@ -15,11 +15,11 @@
                 List Of Registered FCy Requests.
             </p>
             <div class="flex justify-end gap-4 mb-4">
-                <a href="{{ route('fcy.export.excel') }}">
+                <a href="{{ route('fcy-request.export.excel') }}">
                     <x-bladewind::button type="secondary" icon="download">Export to Excel</x-bladewind::button>
                 </a>
 
-                <a href="{{ route('fcy.export.pdf') }}">
+                <a href="{{ route('fcy-request.export.pdf') }}">
                     <x-bladewind::button type="secondary" icon="file-text">Export to PDF</x-bladewind::button>
                 </a>
             </div>
@@ -47,32 +47,7 @@
                         <td class="text-left">{{ $fcyRequest->currencyType }}</td>
                         <td class="text-left">{{ $fcyRequest->modeOfPayment }}</td>
                         <td class="text-left">{{ $fcyRequest->recordStatus }}</td>
-                        {{-- <td class="text-left">{{ $fcyRequest->descriptionOfGoodService }}</td> --}}
-                        {{-- <td class="!text-center md:table-cell">
-                            <x-bladewind::dropmenu>
-                                <x-bladewind::dropmenu-item>
-                                    <x-bladewind::button size="tiny" type="secondary" icon="eye">
-                                        <a href="" class="btn btn-secondary">View</a>
-                                    </x-bladewind::button>
-                                </x-bladewind::dropmenu-item>
-                                <x-bladewind::dropmenu-item>
-                                    <x-bladewind::button size="tiny" type="secondary" icon="pencil">
-                                        <a href="{{ route('fcy-request.edit', $fcyRequest) }}"
-                                            class="btn btn-warning">Edit</a>
-                                    </x-bladewind::button>
-                                </x-bladewind::dropmenu-item>
-
-                                <x-bladewind::dropmenu-item>
-                                    <form action="" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <x-bladewind::button size="tiny" color="red" type="secondary"
-                                            icon="trash" can-submit="true"
-                                            onclick="return confirm('Are you sure you want to delete this case?')">Delete</x-bladewind::button>
-                                    </form>
-                                </x-bladewind::dropmenu-item>
-                            </x-bladewind::dropmenu>
-                        </td> --}}
+                        
                     </tr>
                 @endforeach
             </x-bladewind::table>

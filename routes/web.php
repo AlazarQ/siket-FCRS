@@ -100,7 +100,7 @@ Route::middleware('auth')->group(function () {
     //// export reports route
     Route::get('/fcy-request/export/excel', function () {
         return Excel::download(new FcyRequestExport, 'fcy_requests.xlsx');
-    })->name('fcy.export.excel');
+    })->name('fcy-request.export.excel');
 
     Route::get('/fcy-request/export/pdf', function () {
         $data = FCY_Request::all();
