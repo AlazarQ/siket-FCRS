@@ -16,7 +16,8 @@ class FCYRequestController extends Controller
     public function index(): View
     {
         // Fetch all FCY_Request records from the database which are autorized
-        $fcyRequests = FCY_Request::where('recordStatus', 'AUTH')->get();
+        $fcyRequests = FCY_Request::where('recordStatusRegistration', 'AUTH')
+        ->where('recordStatusAllocation', 'APPROVED')->get();
         // $fcyRequests = FCY_Request::all();
         // Pass the records to the view
         return view('fcy-request.index', compact('fcyRequests'));
@@ -68,7 +69,7 @@ class FCYRequestController extends Controller
         } else {
             $data['requestFiles'] = null; // Set to null if no file is uploaded
         }
-        $data['recordStatus'] = 'INAU'; // Set default record status
+        $data['recordStatusRegistration'] = 'INAU'; // Set default record status
 
         $data['createdBy'] = Auth::id();
         // file upload handling
@@ -139,7 +140,7 @@ class FCYRequestController extends Controller
         } else {
             $data['requestFiles'] = $fCY_Request->requestFiles; // Set to null if no file is uploaded
         }
-        $data['recordStatus'] = 'INAU';
+        $data['recordStatusRegistration'] = 'INAU';
 
         $data['updatedBy'] = Auth::id();
         // file upload handling
@@ -167,7 +168,7 @@ class FCYRequestController extends Controller
     public function listUnauthorizedRequests()
     {
         // Fetch all unauthorized FCY_Request records from the database
-        $fcyRequests = FCY_Request::where('recordStatus', 'INAU')->get();
+        $fcyRequests = FCY_Request::where('recordStatusRegistration', 'INAU')->get();
         // Pass the records to the view
         return view('fcy-request.listUnauthorizedRequests', compact('fcyRequests'));
     }
@@ -176,7 +177,8 @@ class FCYRequestController extends Controller
         // Find the request by ID
         $fcyRequest = FCY_Request::findOrFail($id);
         // Update the record status to 'AUTH'
-        $fcyRequest->recordStatus = 'AUTH';
+        $fcyRequest->recordStatusRegistration = 'AUTH';
+        $fcyRequest->recordStatusAllocation = 'UNAPPROVED'; /// update the status as un approved
         $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
         $fcyRequest->save();
         // Redirect back with a success message
@@ -188,15 +190,51 @@ class FCYRequestController extends Controller
         // Find the request by ID
         $fcyRequest = FCY_Request::findOrFail($id);
         // Update the record status to 'REJCT'
-        $fcyRequest->recordStatus = 'REJCT';
+        $fcyRequest->recordStatusRegistration = 'REJCT';
         $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
         $fcyRequest->save();
         // Redirect back with a success message
         return redirect()->route('fcy-request.listUnauthorizedRequests')
             ->with('success', "<script>showNotification('FCY Request', 'Request Rejected Successfully')</script>");
     }
+    //////////////////// //////////////////////////////////
+    //// create a new function that will be used to authorize or reject the request from the list
+    public function listAuthorizedRequests()
+    {
+        // Fetch all unauthorized FCY_Request records from the database
+        $fcyRequests = FCY_Request::where('recordStatusAllocation', 'UNAPPROVED')
+            ->where('recordStatusRegistration', 'AUTH')
+            ->get();
+        // Pass the records to the view
+        return view('fcy-request.listAuthorizedRequests', compact('fcyRequests'));
+    }
 
+    public function authorizeRequestAllocation($id)
+    {
+        // Find the request by ID
+        $fcyRequest = FCY_Request::findOrFail($id);
+        // Update the record status to 'APPROVED'
+        $fcyRequest->recordStatusAllocation = 'APPROVED';
+        $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
+        $fcyRequest->save();
+        // Redirect back with a success message
+        return redirect()->route('fcy-request.listAuthorizedRequests')
+            ->with('success', "<script>showNotification('FCY Request', 'Allocation Request Approved Successfully')</script>");
+    }
 
+    public function rejectRequestAllocation($id)
+    {
+        // Find the request by ID
+        $fcyRequest = FCY_Request::findOrFail($id);
+        // Update the record status to 'REJCT'
+        $fcyRequest->recordStatusAllocation = 'REJCT';
+        $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
+        $fcyRequest->save();
+        // Redirect back with a success message
+        return redirect()->route('fcy-request.listAuthorizedRequests')
+            ->with('success', "<script>showNotification('FCY Request', 'Allocation Request Rejected Successfully')</script>");
+    }
+    //////////////// reports ///////////////////////
     public function allFcyRequests()
     {
         $allFcyRequest = FCY_Request::all();
@@ -205,13 +243,13 @@ class FCYRequestController extends Controller
 
     public function unAuthFcyRequests()
     {
-        $unAuthFcyRequests = FCY_Request::where('recordStatus', 'INAU')->get();
+        $unAuthFcyRequests = FCY_Request::where('recordStatusRegistration', 'INAU')->get();
         return view('fcy-request.unAuthFcyRequests', compact('unAuthFcyRequests'));
     }
 
     public function authFcyRequests()
     {
-        $authFcyRequests = FCY_Request::where('recordStatus', 'AUTH')->get();
+        $authFcyRequests = FCY_Request::where('recordStatusRegistration', 'AUTH')->get();
         return view('fcy-request.authFcyRequests', compact('authFcyRequests'));
     }
 
@@ -223,7 +261,7 @@ class FCYRequestController extends Controller
 
     public function rejectedFcyRequests()
     {
-        $rejectedFcyRequestsRegistration = FCY_Request::where('recordStatus', 'REJCT')->get();
+        $rejectedFcyRequestsRegistration = FCY_Request::where('recordStatusRegistration', 'REJCT')->get();
         $rejectedFcyRequestsApplication = FCY_Request::where('applicationStatus', 'REJECTED')->get();
         return view('fcy-request.rejectedFcyRequests', compact('rejectedFcyRequestsRegistration', 'rejectedFcyRequestsApplication'));
     }

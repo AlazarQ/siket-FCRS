@@ -28,12 +28,13 @@ return new class extends Migration
             $table->string('shipmentPlace')->nullable();
             $table->string('destinationPlace')->nullable();
             $table->string('incoterms')->nullable();
-            $table->string('recordStatus')->nullable(); // default status is pending
-            $table->string('applicationStatus')->nullable(); // default status is pending
-            $table->string('requestRemarks')->nullable(); // remarks for the request
-            $table->string('requestFiles')->nullable(); // files related to the request
-            $table->string('createdBy')->nullable(); // user who created the request
-            $table->string('updatedBy')->nullable(); // user who updated the request
+            $table->string('recordStatusRegistration')->nullable();  
+            $table->string('recordStatusAllocation')->nullable();  
+            $table->string('applicationStatus')->nullable();  
+            $table->string('requestRemarks')->nullable();  
+            $table->string('requestFiles')->nullable();  
+            $table->string('createdBy')->nullable();  
+            $table->string('updatedBy')->nullable();  
             $table->timestamps();
         });
     }

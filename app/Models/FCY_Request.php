@@ -29,7 +29,8 @@ class FCY_Request extends Model
         'destinationPlace',
         'incoterms',
         'recordStatus',
-        'applicationStatus',
+        'recordStatusRegistration',
+        'recordStatusAllocation' ,
         'requestRemarks',
         'requestFiles',
         'createdBy', // user who created the request

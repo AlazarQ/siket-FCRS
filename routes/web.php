@@ -49,10 +49,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/fcy-request/{fCY_Request}/edit', [FCYRequestController::class, 'edit'])->name('fcy-request.edit');
     Route::put('/fcy-request/{fCY_Request}/update', [FCYRequestController::class, 'update'])->name('fcy-request.update');
     Route::delete('/fcy-request/{id}/delete', [FCYRequestController::class, 'destroy'])->name('fcy-request.destroy');
-    ///////// route to list all unauthorized requests
+    
+    ///////// route to list all unauthorized (Registration) requests
     Route::get('/fcy-request/list-unauthorized', [FCYRequestController::class, 'listUnauthorizedRequests'])->name('fcy-request.listUnauthorizedRequests');
     Route::get('/fcy-request/authorize/{id}', [FCYRequestController::class, 'authorizeRequest'])->name('fcy-request.authorize');
     Route::get('/fcy-request/reject/{id}', [FCYRequestController::class, 'rejectRequest'])->name('fcy-request.reject');
+
+    ///////// route to list all unauthorized (Allocation) requests
+    Route::get('/fcy-request/list-AuthorizedRequests', [FCYRequestController::class, 'listAuthorizedRequests'])->name('fcy-request.listAuthorizedRequests');
+    Route::get('/fcy-request/authorizeAllocation/{id}', [FCYRequestController::class, 'authorizeRequestAllocation'])->name('fcy-request.authorizeAllocation');
+    Route::get('/fcy-request/rejectAllocation/{id}', [FCYRequestController::class, 'rejectRequestAllocation'])->name('fcy-request.rejectAllocation');
 
     // add the route for user menu for add, edit update approve and so on 
     Route::resource('users', UserController::class);
