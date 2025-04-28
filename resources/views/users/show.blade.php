@@ -2,7 +2,6 @@
     <x-slot name="header">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <h2 class="text-xl font-semibold leading-tight">
-                {{ __('District Details') }}
             </h2>
         </div>
     </x-slot>
@@ -11,7 +10,7 @@
     <x-bladewind.card>
         <h1 class="my-2 text-4xl font-light text-green-900/80"><b>User Details</b></h1>
         <p class="mt-3 mb-6 text-green-900/80 text-sm">
-            Below are the details of the selected District.
+            Below are the details of the selected User.
         </p>
         <div class="grid grid-cols-1">
 

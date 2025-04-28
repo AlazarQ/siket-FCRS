@@ -35,17 +35,27 @@
         </x-bladewind::card>
     </div>
     <br>
-    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-5">
+    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-5">
 
         <x-bladewind.card title="FCY Request - Status">
 
-            <x-bladewind::horizontal-line-graph label="Approved: " percentage="{{ $totalPercentApproved }}" color="red" class="py-3" />
+            <x-bladewind::horizontal-line-graph label="ALL: " percentage="55" color="yellow" />
 
-            <x-bladewind::horizontal-line-graph label="Rejected: " percentage="{{ $totalpercentRejected }}" color="blue" />
+            <x-bladewind::horizontal-line-graph label="Approved: " percentage="30" color="red" class="py-3" />
+
+            <x-bladewind::horizontal-line-graph label="Rejected: " percentage="15" color="blue" />
 
         </x-bladewind.card>
 
-        
+        <x-bladewind.card title="Dummy Graph">
+
+            <x-bladewind::horizontal-line-graph label="Siket Bank 1: " percentage="33" color="cyan" />
+
+            <x-bladewind::horizontal-line-graph label="Siket Bank 2: " percentage="43" color="purple" class="py-3" />
+
+            <x-bladewind::horizontal-line-graph label="Siket Bank 3: " percentage="24" color="gray" />
+
+        </x-bladewind.card>
 
     </div><br>
 
@@ -71,10 +81,10 @@
     new Chart(ctx1, {
         type: 'bar',
         data: {
-            labels: @json($labels), // Dynamically pass labels
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
             datasets: [{
                 label: '# of Fcy Requests',
-                data: @json($data), // Dynamically pass data
+                data: [12, 19, 3, 5, 2, 3],
                 borderWidth: 1
             }]
         },
@@ -92,10 +102,10 @@
     new Chart(ctx2, {
         type: 'doughnut',
         data: {
-            labels: @json($labels),
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
             datasets: [{
                 label: '# of Fcy Requests',
-                data: @json($data),
+                data: [12, 19, 3, 5, 2, 3],
                 borderWidth: 1
             }]
         },

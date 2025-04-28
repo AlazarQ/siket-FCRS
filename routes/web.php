@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\PasswordChangeController;
 
 use App\Exports\FcyRequestExport;
+use App\Http\Controllers\DashboardController;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\FCY_Request;
@@ -23,20 +24,20 @@ use App\Models\FCY_Request;
 */
 
 Route::get('/', function () {
-    //retun view login when the session is over else redirect to dashboard
+    // Redirect to the new dashboard view after login
     if (session('status') == 'logged_out') {
         return view('auth/login');
     } else {
-        return redirect('/dashboard');
+        return redirect()->route('dashboard'); // Ensure correct route name
     }
-    // return view('auth/login')
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'adminDash'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard'); // Ensure this matches the route name used in redirects
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
