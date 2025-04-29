@@ -39,17 +39,37 @@ class DashboardController extends Controller
         foreach ($requests as $request) {
             $labels[] = $request->recordStatusAllocation; // Fixed key
             $data[] = $request->count;
-        } 
+        }
 
         $totalFcyRequests = FCY_Request::count();
         $totalFcyAmount = number_format(FCY_Request::sum('performaAmount'), 2);
         $totalApproved = FCY_Request::where('recordStatusAllocation', 'APPROVED')->count();
-        $approvedAmount = number_format(FCY_Request::where('recordStatusAllocation', 'APPROVED')->sum('performaAmount'), 2);
+        $approvedAmount = FCY_Request::where('recordStatusAllocation', 'APPROVED')
+            ->selectRaw('"currencyType", SUM("performaAmount") as total_amount')
+            ->groupBy('currencyType')
+            ->get();
         $totalRejected = FCY_Request::where('recordStatusAllocation', 'REJCT')->count();
-        $rejectedAmount = number_format(FCY_Request::where('recordStatusAllocation', 'REJCT')->sum('performaAmount'), 2);
+        $rejectedAmount = FCY_Request::where('recordStatusAllocation', 'REJCT')
+            ->selectRaw('"currencyType", SUM("performaAmount") as total_amount')
+            ->groupBy('currencyType')
+            ->get();
+        $totalRejectedReg = FCY_Request::where('recordStatusRegistration', 'REJCT')->count();
+        $rejectedAmountReg = FCY_Request::where('recordStatusRegistration', 'REJCT')
+            ->selectRaw('"currencyType", SUM("performaAmount") as total_amount')
+            ->groupBy('currencyType')
+            ->get();
 
-        $totalPercentApproved = ($totalApproved / $totalFcyRequests) * 100;
-        $totalpercentRejected= ($totalRejected / $totalFcyRequests) * 100;
+
+        if ($totalFcyRequests == 0) {
+            $totalPercentApproved = 0;
+            $totalpercentRejected = 0;
+            $totalpercentRejectedReg = 0;
+        } else {
+            $totalPercentApproved = ($totalApproved / $totalFcyRequests) * 100;
+            $totalpercentRejected = ($totalRejected / $totalFcyRequests) * 100;
+            $totalpercentRejectedReg = ($totalRejectedReg / $totalFcyRequests) * 100;
+        }
+
 
         // Load the new admin dashboard view
         return view('dashboard', compact(
@@ -61,6 +81,9 @@ class DashboardController extends Controller
             'rejectedAmount',
             'totalPercentApproved',
             'totalpercentRejected',
+            'totalRejectedReg',
+            'totalpercentRejectedReg',
+            'rejectedAmountReg',
             'labels',
             'data'
         ));

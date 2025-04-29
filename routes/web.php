@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\FCY_Request;
+use App\Http\Controllers\AuditController;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,20 +120,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/unauthorized', function () {
         return view('error.403');
     })->name('unauthorized');
+
+    /// audit Routes 
+    Route::get('/audit', [AuditController::class, 'index'])->name('audit.index');
 });
 
 // useless routes
 // Just to demo sidebar dropdown links active states.
-Route::get('/buttons/text', function () {
-    return view('buttons-showcase.text');
-})->middleware(['auth'])->name('buttons.text');
+// Route::get('/buttons/text', function () {
+//     return view('buttons-showcase.text');
+// })->middleware(['auth'])->name('buttons.text');
 
-Route::get('/buttons/icon', function () {
-    return view('buttons-showcase.icon');
-})->middleware(['auth'])->name('buttons.icon');
+// Route::get('/buttons/icon', function () {
+//     return view('buttons-showcase.icon');
+// })->middleware(['auth'])->name('buttons.icon');
 
-Route::get('/buttons/text-icon', function () {
-    return view('buttons-showcase.text-icon');
-})->middleware(['auth'])->name('buttons.text-icon');
+// Route::get('/buttons/text-icon', function () {
+//     return view('buttons-showcase.text-icon');
+// })->middleware(['auth'])->name('buttons.text-icon');
 
 require __DIR__ . '/auth.php';
