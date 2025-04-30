@@ -42,7 +42,10 @@ class DashboardController extends Controller
         }
 
         $totalFcyRequests = FCY_Request::count();
-        $totalFcyAmount = number_format(FCY_Request::sum('performaAmount'), 2);
+        // $totalFcyAmount = number_format(FCY_Request::sum('performaAmount'), 2);
+        $totalFcyAmount = FCY_Request::selectRaw('"currencyType", SUM("performaAmount") as total_amount')
+            ->groupBy('currencyType')
+            ->get();
         $totalApproved = FCY_Request::where('recordStatusAllocation', 'APPROVED')->count();
         $approvedAmount = FCY_Request::where('recordStatusAllocation', 'APPROVED')
             ->selectRaw('"currencyType", SUM("performaAmount") as total_amount')

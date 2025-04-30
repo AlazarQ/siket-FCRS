@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('incoterm_lists', function (Blueprint $table) {
             $table->id();
+            $table->string('shortCode')->nullable();
+            $table->string('description')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FCY_Request;
 use App\Http\Controllers\Controller;
+use App\Models\currencies;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -17,10 +18,12 @@ class FCYRequestController extends Controller
     {
         // Fetch all FCY_Request records from the database which are autorized
         $fcyRequests = FCY_Request::where('recordStatusRegistration', 'AUTH')
-        ->where('recordStatusAllocation', 'APPROVED')->get();
+            ->where('recordStatusAllocation', 'APPROVED')->get();
         // $fcyRequests = FCY_Request::all();
         // Pass the records to the view
-        return view('fcy-request.index', compact('fcyRequests'));
+        $currencyList = currencies::select('description as label', 'shortCode as value')->get();
+        //- where('status', 'ACTIVE')
+        return view('fcy-request.index', compact('fcyRequests', 'currencyList'));
         // return view('fcy-request.index');
     }
 
@@ -29,7 +32,11 @@ class FCYRequestController extends Controller
      */
     public function create()
     {
-        return view('fcy-request.create');
+        $currencyList = currencies::select('description as label', 'shortCode as value')
+        ->where('status', 'ACTIVE')
+        ->get();
+        //- where('status', 'ACTIVE')
+        return view('fcy-request.create', compact('currencyList'));
     }
 
     /**
@@ -91,9 +98,24 @@ class FCYRequestController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FCY_Request $fCY_Request)
+    public function showAuthAlloc(FCY_Request $fCY_Request)
     {
-        //
+        return view('fcy-request.showAuthAlloc', compact('fCY_Request'));
+    }
+
+    public function showAuthReg(FCY_Request $fCY_Request)
+    {
+        return view('fcy-request.showAuthReg', compact('fCY_Request'));
+    }
+
+    public function showRejectedAlloc(FCY_Request $fCY_Request)
+    {
+        return view('fcy-request.showRejectedAlloc', compact('fCY_Request'));
+    }
+
+    public function showRejectReg(FCY_Request $fCY_Request)
+    {
+        return view('fcy-request.showRejectReg', compact('fCY_Request'));
     }
 
     /**

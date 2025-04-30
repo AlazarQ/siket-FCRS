@@ -12,6 +12,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\FCY_Request;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\Settings;
+use App\Http\Controllers\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/fcy-request/{fCY_Request}/edit', [FCYRequestController::class, 'edit'])->name('fcy-request.edit');
     Route::put('/fcy-request/{fCY_Request}/update', [FCYRequestController::class, 'update'])->name('fcy-request.update');
     Route::delete('/fcy-request/{id}/delete', [FCYRequestController::class, 'destroy'])->name('fcy-request.destroy');
-    
+
     ///////// route to list all unauthorized (Registration) requests
     Route::get('/fcy-request/list-unauthorized', [FCYRequestController::class, 'listUnauthorizedRequests'])->name('fcy-request.listUnauthorizedRequests');
     Route::get('/fcy-request/authorize/{id}', [FCYRequestController::class, 'authorizeRequest'])->name('fcy-request.authorize');
@@ -104,6 +106,39 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/rejectedFcyRequests', [FCYRequestController::class, 'rejectedFcyRequests'])
         ->name('fcy-request.rejectedFcyRequests');
 
+
+    ///// Routes for request authorization and rejection
+    Route::get('/fcy-request/{fCY_Request}/showAuthAlloc', [FCYRequestController::class, 'showAuthAlloc'])->name('fcy-request.showAuthAlloc');
+    Route::get('/fcy-request/{fCY_Request}/showAuthReg', [FCYRequestController::class, 'showAuthReg'])->name('fcy-request.showAuthReg');
+    Route::get('/fcy-request/{fCY_Request}/showRejectedAlloc', [FCYRequestController::class, 'showRejectedAlloc'])->name('fcy-request.showRejectedAlloc');
+    Route::get('/fcy-request/{fCY_Request}/showRejectReg', [FCYRequestController::class, 'showRejectReg'])->name('fcy-request.showRejectReg');
+
+
+    /// routes for settings 
+    Route::get('/settings/currency', [SettingsController::class, 'currencySettingsIndex'])
+        ->name('settings.currency.index');
+    Route::get('/settings/incoterms', [SettingsController::class, 'incotermsSettingsIndex'])
+        ->name('settings.incoterms.index');
+    Route::get('/settings/modeOfPayments', [SettingsController::class, 'modeOfPaymentSettingsIndex'])
+        ->name('settings.modeOfPayments.index');
+
+    Route::get('/settings/currency/add', [SettingsController::class, 'currencySettingsAdd'])
+        ->name('settings.currency.create');
+
+    Route::get('/settings/incoterms/add', [SettingsController::class, 'incotermsSettingsAdd'])
+        ->name('settings.incoterms.create');
+
+    Route::get('/settings/modeOfPayments/add', [SettingsController::class, 'modeOfPaymentSettingsAdd'])
+        ->name('settings.modeOfPayments.create');
+
+    Route::post('/settings/currency/store', [SettingsController::class, 'currencySettingStore'])
+        ->name('settings.currency.store');
+
+    Route::post('/settings/incoterms/store', [SettingsController::class, 'incotermsSettingStore'])
+        ->name('settings.incoterms.store');
+
+    Route::post('/settings/modeOfPayments/store', [SettingsController::class, 'modeOfPaymentsStore'])
+        ->name('settings.modeOfPayments.store');
 
     //// export reports route
     Route::get('/fcy-request/export/excel', function () {

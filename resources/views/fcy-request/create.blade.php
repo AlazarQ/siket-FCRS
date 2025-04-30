@@ -8,14 +8,13 @@
     </x-slot>
     @if (session('success'))
         {!! session('success') !!}
-
     @endif
     @if (session('error'))
         {!! session('error') !!}
     @endif
     <?php
     $incotermList = [['label' => 'Cost and Freight', 'value' => 'CFR'], ['label' => ' Cost Insurance and Freight', 'value' => 'CIF'], ['label' => 'Ex Works', 'value' => 'EXW'], ['label' => 'Free Carrier', 'value' => 'FCA'], ['label' => 'Free Alongside Ship', 'value' => 'FAS'], ['label' => 'Free On Board', 'value' => 'FOB'], ['label' => 'Carriage Paid To', 'value' => 'CPT'], ['label' => 'Carriage and Insurance Paid To', 'value' => 'CIP'], ['label' => 'Delivered at Terminal', 'value' => 'DAT'], ['label' => 'Delivered at Place', 'value' => 'DAP'], ['label' => 'Delivered Duty Paid', 'value' => 'DDP']];
-    $currencyList = [
+    $currencyList1 = [
         ['label' => 'US Dollar', 'value' => 'USD'],
         ['label' => 'Euro', 'value' => 'EUR'],
         ['label' => 'British pound', 'value' => 'GBP'],
@@ -88,7 +87,9 @@
                     label="Description of Good / Service"></x-bladewind.textarea>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <x-bladewind::dropdown name="currencyType" :data="$currencyList" placeholder="Currency" required="true"
+                    {{-- <x-bladewind::select name="currencyType" :data="$currencyList" label="Currency" required="true"
+                        error_message="This Field is required" show_error_inline="true" /> --}}
+                    <x-bladewind::select name="currencyType" required="true" :data="$currencyList" label="Currency"
                         error_message="This Field is required" show_error_inline="true" />
 
                     <x-bladewind::input name="performaAmount" required="true" label="Performa Amount"

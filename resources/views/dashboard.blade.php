@@ -8,12 +8,16 @@
     </x-slot>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5">
         <x-bladewind::card class="cursor-pointer hover:shadow-gray-300">
-            <x-bladewind::statistic number="{{ $totalFcyRequests ?? 0 }}" label="Total FCY Requests">
+            <x-bladewind::statistic number="{{ $totalFcyRequests ?? 0 }}" label="Total FCY Requests" >
                 <x-slot name="icon">
                     <x-icons.fcyRequest class="h-16 w-16 p-2 text-white rounded-full " aria-hidden="true" />
                 </x-slot>
             </x-bladewind::statistic><br>
-            <x-bladewind::statistic currency="USD" number="{{ $totalFcyAmount ?? 0 }}" />
+            {{-- <x-bladewind::statistic currency="USD" number="{{ $totalFcyAmount ?? 0 }}" /> --}}
+            @foreach ($totalFcyAmount as $approved)
+                <x-bladewind::statistic currency="{{ $approved->currencyType }}"
+                    number="{{ number_format($approved->total_amount, 2) }}" />
+            @endforeach
         </x-bladewind::card>
 
         <x-bladewind::card class="cursor-pointer hover:shadow-gray-300">
@@ -30,7 +34,7 @@
         </x-bladewind::card>
     </div><br>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5">
-        
+
         <x-bladewind::card class="cursor-pointer hover:shadow-gray-300">
             <x-bladewind::statistic number="{{ $totalRejected ?? 0 }}" label="Total Rejected - Application">
                 <x-slot name="icon">

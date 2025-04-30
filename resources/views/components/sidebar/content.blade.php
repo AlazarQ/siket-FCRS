@@ -31,8 +31,8 @@
         <x-sidebar.sublink title="Approve Request (Registration)"
             href="{{ route('fcy-request.listUnauthorizedRequests') }}" :active="request()->routeIs('fcy-request.listUnauthorizedRequests')" />
 
-        <x-sidebar.sublink title="Approve Request (Allocation)"
-            href="{{ route('fcy-request.listAuthorizedRequests') }}" :active="request()->routeIs('fcy-request.listAuthorizedRequests')" />
+        <x-sidebar.sublink title="Approve Request (Allocation)" href="{{ route('fcy-request.listAuthorizedRequests') }}"
+            :active="request()->routeIs('fcy-request.listAuthorizedRequests')" />
 
         <x-sidebar.sublink title="Request Lists " href="{{ route('fcy-request.index') }}" :active="request()->routeIs('fcy-request.index')" />
     </x-sidebar.dropdown>
@@ -54,5 +54,40 @@
         <x-sidebar.sublink title="Rejected Requests" href="{{ route('fcy-request.rejectedFcyRequests') }}"
             :active="request()->routeIs('fcy-request.rejectedFcyRequests')" />
     </x-sidebar.dropdown>
+
+    @switch(auth()->user()->userRole)
+        @case('ADMIN')
+            <x-sidebar.dropdown title="Audits" :active="Str::startsWith(request()->route()->uri(), 'audit')">
+                <x-slot name="icon">
+                    <x-icons.audits class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+                </x-slot>
+
+                <x-sidebar.sublink title="User Audit" href="{{ route('audit.index') }}" :active="request()->routeIs('audit.index')" />
+
+            </x-sidebar.dropdown>
+        @break
+
+        @default
+    @endswitch
+
+    @switch(auth()->user()->userRole)
+        @case('ADMIN')
+            <x-sidebar.dropdown title="Settings " :active="Str::startsWith(request()->route()->uri(), 'settings')">
+                <x-slot name="icon">
+                    <x-icons.settings class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
+                </x-slot>
+
+                <x-sidebar.sublink title="Currency" href="{{ route('settings.currency.index') }}" :active="request()->routeIs('settings.currency.index')" />
+
+                <x-sidebar.sublink title="Mode of Payment" href="{{ route('settings.modeOfPayments.index') }}"
+                    :active="request()->routeIs('settings.modeOfPayments.index')" />
+
+                <x-sidebar.sublink title="Incoterms" href="{{ route('settings.incoterms.index') }}" :active="request()->routeIs('settings.incoterms.index')" />
+
+            </x-sidebar.dropdown>
+        @break
+
+        @default
+    @endswitch
 
 </x-perfect-scrollbar>

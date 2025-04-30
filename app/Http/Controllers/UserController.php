@@ -31,7 +31,7 @@ class UserController extends Controller
     {
         $districts = District::select('districtName as label', 'districtCode as value')->get();
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
-        // $roles = Role::select('name as label', 'name as value')->get();
+        // $roles = Role::select('name as label', 'name as value')->get(); 
 
         return view('users.create', compact('districts', 'branchs'));
     }
