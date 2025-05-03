@@ -53,6 +53,10 @@
                     </tr>
                 @endforeach
             </x-bladewind::table>
+             <!-- Pagination -->
+             <div class="mt-4">
+                {{ $currency->links() }}
+            </div>
         </x-bladewind::card>
     </div>
 </x-app-layout>

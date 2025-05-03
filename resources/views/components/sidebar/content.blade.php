@@ -84,6 +84,9 @@
 
                 <x-sidebar.sublink title="Incoterms" href="{{ route('settings.incoterms.index') }}" :active="request()->routeIs('settings.incoterms.index')" />
 
+                <x-sidebar.sublink title="Other Settings" href="{{ route('settings.otherSettings.otherSettingsIndex') }}"
+                    :active="request()->routeIs('settings.otherSettings.otherSettingsIndex')" />
+
             </x-sidebar.dropdown>
         @break
 

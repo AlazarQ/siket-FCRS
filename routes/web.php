@@ -137,8 +137,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/incoterms/store', [SettingsController::class, 'incotermsSettingStore'])
         ->name('settings.incoterms.store');
 
-    Route::post('/settings/modeOfPayments/store', [SettingsController::class, 'modeOfPaymentsStore'])
+    Route::post('/settings/modeOfPayments/store', [SettingsController::class, 'modeOfPaymentSettingStore'])
         ->name('settings.modeOfPayments.store');
+
+    /// other settings Routes
+    Route::get('/settings/fcy-Id-Settings', [SettingsController::class, 'idSequenceIndex'])
+        ->name('settings.otherSettings.otherSettingsIndex');
 
     //// export reports route
     Route::get('/fcy-request/export/excel', function () {

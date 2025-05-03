@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\FCY_Request;
 use App\Http\Controllers\Controller;
 use App\Models\currencies;
+use App\Models\incoterms;
+use App\Models\modeOfPayments;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\settings;
+use App\Models\Branch;
 
 class FCYRequestController extends Controller
 {
@@ -30,13 +35,23 @@ class FCYRequestController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(FCY_Request $fCY_Request)
     {
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
         $currencyList = currencies::select('description as label', 'shortCode as value')
-        ->where('status', 'ACTIVE')
-        ->get();
+            ->where('status', 'ACTIVE')
+            ->get();
+        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $currentDate = now()->format('Ymd'); // Get the current date in YYYYMMDD format
+        $idSequence = settings::where('shortCode', 'IDG')->value('value'); // Fetch the current sequence value from settings
+        $idReference = 'SKB' . $idSequence . $currentDate; // Concatenate to form the ID reference
         //- where('status', 'ACTIVE')
-        return view('fcy-request.create', compact('currencyList'));
+        return view('fcy-request.create', compact('currencyList', 'modeOfPaymentsList', 'incotermsList', 'idReference', 'branchs'));
     }
 
     /**
@@ -87,10 +102,15 @@ class FCYRequestController extends Controller
         // show sucess notifiation
         // check if the request was successful
         if ($data) {
-            return redirect()->route('fcy-request.index')
+            // settings::where('shortCode', 'IDG')->increment('value');
+            settings::where('shortCode', 'IDG')
+                ->update([
+                    'value' => DB::raw("LPAD(CAST(CAST(value AS INTEGER) + 1 AS TEXT), 5, '0')"),
+                ]);
+            return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('success', "<script>showNotification('FCY Request', 'Request Registered Successfully')</script>");
         } else {
-            return redirect()->route('fcy-request.index')
+            return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('error', "<script>showNotification('FCY Request', 'Request Registration Failed')</script>");
         }
     }
@@ -100,22 +120,65 @@ class FCYRequestController extends Controller
      */
     public function showAuthAlloc(FCY_Request $fCY_Request)
     {
-        return view('fcy-request.showAuthAlloc', compact('fCY_Request'));
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        $currencyList = currencies::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        return view('fcy-request.showAuthAlloc', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
     }
 
     public function showAuthReg(FCY_Request $fCY_Request)
     {
-        return view('fcy-request.showAuthReg', compact('fCY_Request'));
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        $currencyList = currencies::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        return view('fcy-request.showAuthReg', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
     }
 
     public function showRejectedAlloc(FCY_Request $fCY_Request)
     {
-        return view('fcy-request.showRejectedAlloc', compact('fCY_Request'));
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        $currencyList = currencies::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+
+        return view('fcy-request.showRejectedAlloc', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
     }
 
     public function showRejectReg(FCY_Request $fCY_Request)
     {
-        return view('fcy-request.showRejectReg', compact('fCY_Request'));
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        $currencyList = currencies::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+
+        return view('fcy-request.showRejectReg', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
     }
 
     /**
@@ -123,8 +186,9 @@ class FCYRequestController extends Controller
      */
     public function edit(FCY_Request $fCY_Request)
     {
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
         // redirect to edit.blade.php file to update existing requests
-        return view('fcy-request.edit', compact('fCY_Request'));
+        return view('fcy-request.edit', compact('fCY_Request', 'branchs'));
     }
 
     /**
@@ -163,6 +227,7 @@ class FCYRequestController extends Controller
             $data['requestFiles'] = $fCY_Request->requestFiles; // Set to null if no file is uploaded
         }
         $data['recordStatusRegistration'] = 'INAU';
+         $data['recordStatusAllocation'] = '';
 
         $data['updatedBy'] = Auth::id();
         // file upload handling
@@ -170,10 +235,10 @@ class FCYRequestController extends Controller
         // Save the FCY_Request instance to the database
         $fCY_Request->update($data);
         if ($data) {
-            return redirect()->route('fcy-request.index')
+            return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('success', "<script>showNotification('FCY Request', 'Request Updated Successfully')</script>");
         } else {
-            return redirect()->route('fcy-request.index')
+            return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('error', "<script>showNotification('FCY Request', 'Request Update Failed')</script>");
         }
     }
@@ -189,6 +254,7 @@ class FCYRequestController extends Controller
     //// create a new function that will be used to authorize or reject the request from the list
     public function listUnauthorizedRequests()
     {
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
         // Fetch all unauthorized FCY_Request records from the database
         $fcyRequests = FCY_Request::where('recordStatusRegistration', 'INAU')->get();
         // Pass the records to the view
@@ -223,12 +289,13 @@ class FCYRequestController extends Controller
     //// create a new function that will be used to authorize or reject the request from the list
     public function listAuthorizedRequests()
     {
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
         // Fetch all unauthorized FCY_Request records from the database
         $fcyRequests = FCY_Request::where('recordStatusAllocation', 'UNAPPROVED')
             ->where('recordStatusRegistration', 'AUTH')
             ->get();
         // Pass the records to the view
-        return view('fcy-request.listAuthorizedRequests', compact('fcyRequests'));
+        return view('fcy-request.listAuthorizedRequests', compact('fcyRequests', 'branchs'));
     }
 
     public function authorizeRequestAllocation($id)
@@ -259,6 +326,7 @@ class FCYRequestController extends Controller
     //////////////// reports ///////////////////////
     public function allFcyRequests()
     {
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
         $allFcyRequest = FCY_Request::all();
         return view('fcy-request.allFcyRequests', compact('allFcyRequest'));
     }

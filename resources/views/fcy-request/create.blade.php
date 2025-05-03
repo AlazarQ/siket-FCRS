@@ -12,34 +12,7 @@
     @if (session('error'))
         {!! session('error') !!}
     @endif
-    <?php
-    $incotermList = [['label' => 'Cost and Freight', 'value' => 'CFR'], ['label' => ' Cost Insurance and Freight', 'value' => 'CIF'], ['label' => 'Ex Works', 'value' => 'EXW'], ['label' => 'Free Carrier', 'value' => 'FCA'], ['label' => 'Free Alongside Ship', 'value' => 'FAS'], ['label' => 'Free On Board', 'value' => 'FOB'], ['label' => 'Carriage Paid To', 'value' => 'CPT'], ['label' => 'Carriage and Insurance Paid To', 'value' => 'CIP'], ['label' => 'Delivered at Terminal', 'value' => 'DAT'], ['label' => 'Delivered at Place', 'value' => 'DAP'], ['label' => 'Delivered Duty Paid', 'value' => 'DDP']];
-    $currencyList1 = [
-        ['label' => 'US Dollar', 'value' => 'USD'],
-        ['label' => 'Euro', 'value' => 'EUR'],
-        ['label' => 'British pound', 'value' => 'GBP'],
-        ['label' => 'Japanese yen', 'value' => 'JPY'],
-        ['label' => 'Renminbi', 'value' => 'CNY'],
-        ['label' => 'Indian rupee', 'value' => 'INR'],
-        ['label' => 'Australian dollar', 'value' => 'AUD'],
-        ['label' => 'Canadian dollar', 'value' => 'CAD'],
-        ['label' => 'Swiss franc', 'value' => 'CHF'],
-        ['label' => 'Hong Kong dollar', 'value' => 'HKD'],
-        ['label' => 'Singapore dollar', 'value' => 'SGD'],
-        ['label' => 'New Zealand dollar', 'value' => 'NZD'],
-        ['label' => 'South Korean won', 'value' => 'KRW'],
-        ['label' => 'Brazilian real', 'value' => 'BRL'],
-        ['label' => 'Mexican peso', 'value' => 'MXN'],
-        ['label' => 'South African rand', 'value' => 'ZAR'],
-        ['label' => 'Turkish lira', 'value' => 'TRY'],
-        ['label' => 'Russian ruble', 'value' => 'RUB'],
-        ['label' => 'Saudi riyal', 'value' => 'SAR'],
-        ['label' => 'United Arab Emirates dirham', 'value' => 'AED'],
-        ['label' => 'Indonesian rupiah', 'value' => 'IDR'],
-        ['label' => 'Thai baht', 'value' => 'THB'],
-    ];
-    $modeOfPaymentList = [['label' => 'Cash-in-Advance', 'value' => 'CAD'], ['label' => 'Letters of Credit', 'value' => 'LC'], ['label' => 'Documentary Collections', 'value' => 'DC'], ['label' => 'Open Account', 'value' => 'OA'], ['label' => 'Consignment', 'value' => 'CO']];
-    ?>
+
     <x-bladewind.notification />
     <x-bladewind.card>
 
@@ -53,6 +26,9 @@
             </p>
             @csrf
             <x-bladewind::card title="General Details">
+                <x-bladewind::input name="idReference" required="true" readonly="true" label="Record Id"
+                    error_message="The Field Cannot be empty - Please Contact System Administrator"
+                    show_error_inline="true" value="{{ $idReference ?? '' }}" />
 
                 <div class="grid grid-cols-2 gap-4">
                     <x-bladewind::datepicker name="dateOfApplication" required="true" label="Date of Application"
@@ -64,9 +40,8 @@
                 <div class="grid grid-cols-2 gap-4">
                     <x-bladewind::input name="NBEAccountNumber" required="true" label="NBE Account Number"
                         error_message="The Field Cannot be empty" />
-                    <x-bladewind::input name="branchName" required="true" label="Request Branch"
-                        error_message="The Field Cannot be empty" />
 
+                    <x-bladewind::select name="branchName" required="true" :data="$branchs" label="Request Branch" />
                 </div>
             </x-bladewind::card>
             <x-bladewind::card title="Applicant Address">
@@ -82,32 +57,65 @@
             </x-bladewind::card>
 
             <x-bladewind::card title="FCY Request Details">
-                <x-bladewind.textarea required="true" name="descriptionOfGoodService"
-                    error_message="This Field is required" show_error_inline="true"
-                    label="Description of Good / Service"></x-bladewind.textarea>
 
                 <div class="grid grid-cols-2 gap-4">
-                    {{-- <x-bladewind::select name="currencyType" :data="$currencyList" label="Currency" required="true"
-                        error_message="This Field is required" show_error_inline="true" /> --}}
+
+                    <x-bladewind::input name="tinNumber" required="true" label="TIN Number"
+                        error_message="This Field is required" show_error_inline="true" />
+
+                    <x-bladewind::input name="performaInvoiceNumber" required="true" label="Performa Invoice Number"
+                        error_message="The Field Cannot be empty" />
+
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+
+                    <x-bladewind::input name="itemName" required="true"  label="Item Name"
+                        error_message="This Field is required" show_error_inline="true" />
+
+                    <x-bladewind::input name="itemQuantity" required="true" label="Item Quantity"
+                        error_message="The Field Cannot be empty" />
+
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <x-bladewind::input name="itemHSCode" required="true" label="Item HS Code"
+                        error_message="The Field Cannot be empty" />
+
+                    <x-bladewind.textarea required="true" name="descriptionOfGoodService"
+                        error_message="This Field is required" show_error_inline="true"
+                        label="Description of Good / Service"></x-bladewind.textarea>
+
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+
                     <x-bladewind::select name="currencyType" required="true" :data="$currencyList" label="Currency"
                         error_message="This Field is required" show_error_inline="true" />
+
+                </div>
+                <div class="grid grid-cols-2 gap-4">
 
                     <x-bladewind::input name="performaAmount" required="true" label="Performa Amount"
                         error_message="The Field Cannot be empty" />
 
+                    <x-bladewind::datepicker name="performaDate" required="true" label="Performa Date"
+                        error_message="The Field Cannot be empty" />
+
                 </div>
                 <div class="grid grid-cols-1">
-                    <x-bladewind::dropdown name="modeOfPayment" :data="$modeOfPaymentList" placeholder="Mode Of Payment"
-                        required="true" error_message="This Field is required" show_error_inline="true" />
+
+                    <x-bladewind::select name="modeOfPayment" required="true" :data="$modeOfPaymentsList"
+                        label="Mode of Payments" error_message="This Field is required" show_error_inline="true" />
+
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <x-bladewind::input name="sheepmentPlace" required="true" label="Sheepment Place"
+                    <x-bladewind::input name="shipmentPlace" required="true" label="Shipment Place"
                         error_message="The Field Cannot be empty" />
                     <x-bladewind::input name="destinationPlace" required="true" label="Place of Destination"
                         error_message="The Field Cannot be empty" />
                 </div>
                 <div class="grid grid-cols-1">
-                    <x-bladewind::dropdown name="incoterms" :data="$incotermList" placeholder="Incoterms" required="true"
+                    <x-bladewind::select name="incoterms" required="true" :data="$incotermsList" label="Incoterms"
                         error_message="This Field is required" show_error_inline="true" />
                 </div>
                 <x-bladewind::filepicker name="requestFiles" label="Attachment" multiple="true"

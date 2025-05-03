@@ -7,13 +7,15 @@ use App\Models\Incoterms;
 use App\Models\modeOfPayments;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\settings;
 
 class SettingsController extends Controller
 {
     // mode of payment settings
     public function modeOfPaymentSettingsIndex()
     {
-        return view('settings.modeOfPayments.index');
+        $modeOfPayments = modeOfPayments::paginate(10);
+        return view('settings.modeOfPayments.index', compact('modeOfPayments'));
     }
 
     public function modeOfPaymentSettingsAdd()
@@ -74,12 +76,13 @@ class SettingsController extends Controller
                 ->with('error', "<script>showNotification('Currency', 'Error While Adding New Currency')</script>");
         }
     }
-    public function mcurrencySettingsUpdate() {}
+    public function currencySettingsUpdate() {}
     // settings for incoterms
 
     public function incotermsSettingsIndex()
     {
-        return view('settings.incoterms.index');
+        $incoterms = Incoterms::all();
+        return view('settings.incoterms.index', compact('incoterms'));
     }
 
     public function incotermsSettingsAdd()
@@ -106,5 +109,22 @@ class SettingsController extends Controller
         }
     }
 
-    public function incotermsSettingsUpdate() {}
+    public function incotermsSettingsUpdate() {
+
+    }
+
+    public function idSequenceIndex() {
+        $otherSettings = settings::paginate(10);
+        return view('settings.otherSettings.otherSettingsIndex', compact('otherSettings'));
+    }
+    public function idSequenceCreate() {
+
+    }
+    public function idSequenceEdit(Request $request) {
+
+    }
+
+    public function idSequenceUpdate(Request $request, settings $setting){
+
+    }
 }

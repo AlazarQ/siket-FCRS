@@ -14,7 +14,7 @@ class currencies extends Authenticatable implements AuditableContract
     protected $table = 'currencies';
     protected $fillable = [
         'shortCode',
-        'desciption',
+        'description',
         'status'
     ];
 }

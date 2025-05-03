@@ -6,7 +6,7 @@
             </h2>
         </div>
     </x-slot>
-    
+
     <?php
     $incotermList = [['label' => 'Cost and Freight', 'value' => 'CFR'], ['label' => ' Cost Insurance and Freight', 'value' => 'CIF'], ['label' => 'Ex Works', 'value' => 'EXW'], ['label' => 'Free Carrier', 'value' => 'FCA'], ['label' => 'Free Alongside Ship', 'value' => 'FAS'], ['label' => 'Free On Board', 'value' => 'FOB'], ['label' => 'Carriage Paid To', 'value' => 'CPT'], ['label' => 'Carriage and Insurance Paid To', 'value' => 'CIP'], ['label' => 'Delivered at Terminal', 'value' => 'DAT'], ['label' => 'Delivered at Place', 'value' => 'DAP'], ['label' => 'Delivered Duty Paid', 'value' => 'DDP']];
     $currencyList = [
@@ -38,75 +38,115 @@
     <x-bladewind.notification />
     <x-bladewind.card>
 
-        <form id="fcy-request-form" class="request-form-update" action="{{ route('fcy-request.authorizeAllocation', $fCY_Request) }}"
-            method="" enctype="multipart/form-data">
+        <form id="fcy-request-form" class="request-form-update"
+            action="{{ route('fcy-request.authorizeAllocation', $fCY_Request) }}" method=""
+            enctype="multipart/form-data">
 
 
             <h1 class="my-2 text-4xl font-light text-green-900/80"><b>View FCY Request - Allocation</b></h1>
             <p class="mt-3 mb-6 text-green-900/80 text-sm">
-                Approve  FCY Request based on the details (Request Allocation).
+                Approve FCY Request based on the details (Request Allocation).
             </p>
             @csrf
             {{-- @method('PUT') --}}
             <x-bladewind::card title="General Details">
 
                 <div class="grid grid-cols-2 gap-4">
-                    <x-bladewind::input name="dateOfApplication"  label="Date of Application"
-                        value="{{ $fCY_Request->dateOfApplication ?? '' }}"
-                         />
-                    <x-bladewind::input name="applicantName"  label="Applicant Name"
+                    <x-bladewind::datepicker name="dateOfApplication" required="true" label="Date of Application"
+                        default_date="{{ $fCY_Request->dateOfApplication ?? '' }}"
+                        error_message="The Field Cannot be empty" show_error_inline="true" />
+                    <x-bladewind::input name="applicantName" required="true" label="Applicant Name"
                         value="{{ $fCY_Request->applicantName ?? '' }}" error_message="The Field Cannot be empty" />
 
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <x-bladewind::input name="NBEAccountNumber"  label="NBE Account Number"
+                    <x-bladewind::input name="NBEAccountNumber" required="true" label="NBE Account Number"
                         value="{{ $fCY_Request->NBEAccountNumber ?? '' }}" error_message="The Field Cannot be empty" />
-                    <x-bladewind::input name="branchName"  label="Request Branch"
-                        value="{{ $fCY_Request->branchName ?? '' }}" error_message="The Field Cannot be empty" />
+
+                    <x-bladewind::select name="branchName" required="true" :data="$branchs" label="Request Branch"
+                        selected_value="{{ $fCY_Request->branchName ?? '' }}" />
 
                 </div>
             </x-bladewind::card>
             <x-bladewind::card title="Applicant Address">
                 <div class="grid grid-cols-2 gap-4">
-                    <x-bladewind::input name="telNumber"  label="Applicant Tel Number"
+                    <x-bladewind::input name="telNumber" required="true" label="Applicant Tel Number"
                         value="{{ $fCY_Request->telNumber ?? '' }}" error_message="The Field Cannot be empty" />
-                    <x-bladewind::input name="phoneNumber"  label="Applicant Mobile Number"
+                    <x-bladewind::input name="phoneNumber" required="true" label="Applicant Mobile Number"
                         value="{{ $fCY_Request->phoneNumber ?? '' }}" error_message="The Field Cannot be empty" />
 
                 </div>
-                <x-bladewind.textarea  name="address" error_message="This Field is required"
+                <x-bladewind.textarea required="true" name="address" error_message="This Field is required"
                     selected_value="{{ $fCY_Request->address ?? '' }}" show_error_inline="true"
                     label="Applicant Full Address"></x-bladewind.textarea>
             </x-bladewind::card>
 
             <x-bladewind::card title="FCY Request Details">
-                <x-bladewind.textarea  name="descriptionOfGoodService"
-                    selected_value="{{ $fCY_Request->descriptionOfGoodService ?? '' }}"
-                    error_message="This Field is required" show_error_inline="true"
-                    label="Description of Good / Service"></x-bladewind.textarea>
+                <div class="grid grid-cols-2 gap-4">
+
+                    <x-bladewind::input name="tinNumber" required="true" label="TIN Number"
+                        error_message="This Field is required" show_error_inline="true" 
+                        value="{{ $fCY_Request->performaInvoiceNumber ?? '' }}" />
+
+                    <x-bladewind::input name="performaInvoiceNumber" required="true" label="Performa Invoice Number"
+                        error_message="The Field Cannot be empty"
+                        value="{{ $fCY_Request->performaInvoiceNumber ?? '' }}" />
+
+                </div>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <x-bladewind::dropdown name="currencyType" :data="$currencyList" placeholder="Currency" 
-                        selected_value="{{ $fCY_Request->currencyType ?? '' }}" 
+
+                    <x-bladewind::input name="itemName" required="true" label="Item Name"
+                        value="{{ $fCY_Request->itemName ?? '' }}" error_message="This Field is required"
                         show_error_inline="true" />
 
-                    <x-bladewind::input name="performaAmount"  label="Performa Amount"
+                    <x-bladewind::input name="itemQuantity" required="true" label="Item Quantity"
+                        error_message="The Field Cannot be empty"
+                        value="{{ $fCY_Request->itemQuantity ?? '' }}" />
+
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <x-bladewind::input name="itemHSCode" required="true" label="Item HS Code"
+                        error_message="The Field Cannot be empty" value="{{ $fCY_Request->itemHSCode ?? '' }}" />
+
+                    <x-bladewind.textarea required="true" name="descriptionOfGoodService"
+                        selected_value="{{ $fCY_Request->descriptionOfGoodService ?? '' }}"
+                        error_message="This Field is required" show_error_inline="true"
+                        label="Description of Good / Service"></x-bladewind.textarea>
+
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-4">
+                    <x-bladewind::dropdown name="currencyType" :data="$currencyList" placeholder="Currency" required="true"
+                        selected_value="{{ $fCY_Request->currencyType ?? '' }}" error_message="This Field is required"
+                        show_error_inline="true" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+
+                    <x-bladewind::input name="performaAmount" required="true" label="Performa Amount"
                         value="{{ $fCY_Request->performaAmount ?? '' }}" error_message="The Field Cannot be empty" />
+
+                    <x-bladewind::datepicker name="performaDate" required="true" label="Performa Amount"
+                        default_date="{{ $fCY_Request->performaDate ?? '' }}"
+                        error_message="The Field Cannot be empty" />
 
                 </div>
                 <div class="grid grid-cols-1">
                     <x-bladewind::dropdown name="modeOfPayment" :data="$modeOfPaymentList" placeholder="Mode Of Payment"
-                        selected_value="{{ $fCY_Request->modeOfPayment ?? '' }}" 
+                        selected_value="{{ $fCY_Request->modeOfPayment ?? '' }}" required="true"
                         error_message="This Field is required" show_error_inline="true" />
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <x-bladewind::input name="shipmentPlace"  label="Shipment Place"
+                    <x-bladewind::input name="shipmentPlace" required="true" label="Shipment Place"
                         value="{{ $fCY_Request->shipmentPlace ?? '' }}" error_message="The Field Cannot be empty" />
-                    <x-bladewind::input name="destinationPlace"  label="Place of Destination"
-                        value="{{ $fCY_Request->destinationPlace ?? '' }}" error_message="The Field Cannot be empty" />
+                    <x-bladewind::input name="destinationPlace" required="true" label="Place of Destination"
+                        value="{{ $fCY_Request->destinationPlace ?? '' }}"
+                        error_message="The Field Cannot be empty" />
                 </div>
                 <div class="grid grid-cols-1">
-                    <x-bladewind::dropdown name="incoterms" :data="$incotermList" placeholder="Incoterms" 
+                    <x-bladewind::dropdown name="incoterms" :data="$incotermList" placeholder="Incoterms" required="true"
                         selected_value="{{ $fCY_Request->incoterms ?? '' }}" error_message="This Field is required"
                         show_error_inline="true" />
                 </div>
@@ -116,7 +156,7 @@
 
                 <div class="flex items-center gap-4">
                     {{-- <div class="flex-1">
-                        <x-bladewind::filepicker name="requestFiles"  placeholder="Request File (PDF)"
+                        <x-bladewind::filepicker name="requestFiles" required="true" placeholder="Request File (PDF)"
                             max_file_size="3" accepted_file_types=".pdf"
                             value="{{ $fCY_Request->requestFiles ?? '' }}" />
                     </div> --}}
@@ -130,8 +170,8 @@
                             </x-bladewind::button>
                         </div>
                     @endif
-                </div>
-                <x-bladewind.textarea  name="requestRemarks" error_message="This Field is required"
+                </div><br>
+                <x-bladewind.textarea required="true" name="requestRemarks" error_message="This Field is required"
                     selected_value="{{ $fCY_Request->requestRemarks ?? '' }}" show_error_inline="true"
                     label="Request Remark"></x-bladewind.textarea>
             </x-bladewind::card>

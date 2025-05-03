@@ -6,19 +6,21 @@
     @if (session('success'))
         {!! session('success') !!}
     @endif
+    @if (session('error'))
+        {!! session('error') !!}
+    @endif
 
     <div class="container mx-auto">
 
         <x-bladewind::card reduce_padding="true">
-            <h1 class="my-2 text-4xl font-light text-green-900/80"><b>Incoterms</b></h1>
+            <h1 class="my-2 text-4xl font-light text-green-900/80"><b>FCY Request - Settings</b></h1>
             <p class="mt-3 mb-6 text-green-900/80 text-sm">
-                List Of Registered Incoterms.
+                List of FCY Request Settings 
             </p>
-            {{-- <h1 class="text-2xl font-bold mb-4">Litigation Cases</h1> --}}
             <div class="text-right">
-                <x-bladewind::button has_spinner="true" name="save-user" onclick="showButtonSpinner('.save-user')">
-                    <a href="{{ route('settings.incoterms.create') }}" class="btn btn-primary">Add New</a>
-                </x-bladewind::button>
+                {{-- <x-bladewind::button has_spinner="true" name="save-user" onclick="showButtonSpinner('.save-user')">
+                    <a href="{{ route('.create') }}" class="btn btn-primary">Add New</a>
+                </x-bladewind::button> --}}
             </div><br>
 
             <x-bladewind::table selectable="flase" divider="thin" name="branch_list" searchable="true" celled="false"
@@ -28,14 +30,17 @@
                     <th class="md:hidden">id</th>
                     <th>Short Code</th>
                     <th>Description / Name</th>
+                    <th>Status</th>
+                    <th>Value</th>
                     <th class="text-right">Actions</th>
                 </x-slot:header>
-                @foreach ($incoterms as $incoterm)
+                @foreach ($otherSettings as $setting)
                     <tr>
-                        <td class="md:hidden">{{ $incoterm->id }}</td>
-                        <td class="text-left">{{ $incoterm->shortCode }}</td>
-                        <td class="text-left">{{ $incoterm->description }}</td>
-                        <td class="text-left">{{ $incoterm->status }}</td>
+                        <td class="md:hidden">{{ $setting->id }}</td>
+                        <td class="text-left">{{ $setting->shortCode }}</td>
+                        <td class="text-left">{{ $setting->description }}</td>
+                        <td class="text-left">{{ $setting->status }}</td>
+                        <td class="text-left">{{ $setting->value }}</td>
                         <td class="!text-center md:table-cell">
                             <x-bladewind::dropmenu>
 
@@ -51,6 +56,10 @@
                     </tr>
                 @endforeach
             </x-bladewind::table>
+             <!-- Pagination -->
+             <div class="mt-4">
+                {{ $otherSettings->links() }}
+            </div>
         </x-bladewind::card>
     </div>
 </x-app-layout>

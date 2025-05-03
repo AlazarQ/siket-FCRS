@@ -22,7 +22,7 @@
             </div><br>
 
             <x-bladewind::table selectable="flase" divider="thin" name="branch_list" searchable="true" celled="false"
-                paginated="true" page_size="5" show_row_numbers="true" default_page="1"
+                paginated="true" page_size="5" show_row_numbers="true" show_row_numbers="true" default_page="1"
                 no_data_message="Branch Data empty!!">
                 <x-slot:header>
                     <th class="md:hidden">id</th>
@@ -31,42 +31,28 @@
                     <th>Status</th>
                     <th class="text-right">Actions</th>
                 </x-slot:header>
-                {{-- @foreach ($fcyRequests as $fcyRequest) --}}
+                @foreach ($modeOfPayments as $modeOfPayment)
                     <tr>
-                        <td class="md:hidden">1</td>
-                        <td class="text-left">LC</td>
-                        <td class="text-left">Letter of Credit</td>
-                        <td class="text-left">ACTIVE</td>
-                        {{-- <td class="md:hidden">{{ $fcyRequest->id }}</td>
-                        <td class="text-left">{{ $fcyRequest->applicantName }}</td>
-                        <td class="text-left">{{ $fcyRequest->branchName }}</td>dService }}</td> --}}
+                        <td class="md:hidden">{{ $modeOfPayment->id }}</td>
+                        <td class="text-left">{{ $modeOfPayment->shortCode }}</td>
+                        <td class="text-left">{{ $modeOfPayment->description }}</td>
+                        <td class="text-left">{{ $modeOfPayment->status }}</td>
                         <td class="!text-center md:table-cell">
                             <x-bladewind::dropmenu>
-                                {{-- <x-bladewind::dropmenu-item>
-                                    <x-bladewind::button size="tiny" type="secondary" icon="eye">
-                                        View
-                                    </x-bladewind::button>
-                                </x-bladewind::dropmenu-item> --}}
                                 <x-bladewind::dropmenu-item>
                                     <x-bladewind::button size="tiny" type="secondary" icon="pencil">
                                         Edit
                                     </x-bladewind::button>
                                 </x-bladewind::dropmenu-item>
-
-                                {{-- <x-bladewind::dropmenu-item>
-                                    <form action="" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <x-bladewind::button size="tiny" color="red" type="secondary"
-                                            icon="trash" can-submit="true"
-                                            onclick="return confirm('Are you sure you want to delete this case?')">Delete</x-bladewind::button>
-                                    </form>
-                                </x-bladewind::dropmenu-item> --}}
                             </x-bladewind::dropmenu>
                         </td>
                     </tr>
-                {{-- @endforeach --}}
+                @endforeach
             </x-bladewind::table>
+            <!-- Pagination -->
+            <div class="mt-4">
+                {{ $modeOfPayments->links() }}
+            </div>
         </x-bladewind::card>
     </div>
 </x-app-layout>

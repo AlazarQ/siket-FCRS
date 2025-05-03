@@ -50,14 +50,9 @@
                                         <a href="" class="btn btn-secondary">View</a>
                                     </x-bladewind::button>
                                 </x-bladewind::dropmenu-item>
-                                <x-bladewind::dropmenu-item>
-                                    <x-bladewind::button size="tiny" type="secondary" icon="pencil">
-                                        <a href="{{ route('fcy-request.edit', $fcyRequest) }}"
-                                            class="btn btn-warning">Edit</a>
-                                    </x-bladewind::button>
-                                </x-bladewind::dropmenu-item>
+                                
 
-                                <x-bladewind::dropmenu-item>
+                                {{-- <x-bladewind::dropmenu-item>
                                     <form action="" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
@@ -65,7 +60,7 @@
                                             icon="trash" can-submit="true"
                                             onclick="return confirm('Are you sure you want to delete this case?')">Delete</x-bladewind::button>
                                     </form>
-                                </x-bladewind::dropmenu-item>
+                                </x-bladewind::dropmenu-item> --}}
                             </x-bladewind::dropmenu>
                         </td>
                     </tr>

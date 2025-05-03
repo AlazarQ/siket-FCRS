@@ -14,7 +14,7 @@ class incoterms extends Authenticatable implements AuditableContract
     protected $table = 'incoterm_lists';
     protected $fillable = [
         'shortCode',
-        'desciption',
+        'description',
         'status'
     ];
 }

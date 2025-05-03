@@ -13,6 +13,7 @@ class FCY_Request extends Model
 
     protected $fillable = [
         'id',
+        'idReference',
         'dateOfApplication',
         'applicantName',
         'branchName',
@@ -21,9 +22,15 @@ class FCY_Request extends Model
         'phoneNumber',
         'address',
         'NBEAccountNumber',
+        'tinNumber',
+        'performaInvoiceNumber',
+        'itemName',
+        'itemQuantity',
+        'itemHSCode',
         'descriptionOfGoodService',
         'currencyType',
         'performaAmount',
+        'performaDate',
         'modeOfPayment',
         'shipmentPlace',
         'destinationPlace',

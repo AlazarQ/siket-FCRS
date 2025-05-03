@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('fcy_requests', function (Blueprint $table) {
             $table->id();
+            $table->string('idReference');
             $table->date('dateOfApplication')->nullable();
             $table->string('applicantName')->nullable();
             $table->string('branchName')->nullable();
@@ -21,20 +22,26 @@ return new class extends Migration
             $table->string('phoneNumber')->nullable();
             $table->string('address')->nullable();
             $table->string('NBEAccountNumber')->nullable();
+            $table->string('tinNumber')->nullable();
+            $table->string('performaInvoiceNumber')->nullable();
+            $table->string('itemName')->nullable();
+            $table->string('itemQuantity')->nullable();
+            $table->string('itemHSCode')->nullable();
             $table->string('descriptionOfGoodService')->nullable();
             $table->string('currencyType')->nullable();
             $table->decimal('performaAmount', 15, 2)->nullable();
+            $table->date('performaDate')->nullable();
             $table->string('modeOfPayment')->nullable();
             $table->string('shipmentPlace')->nullable();
             $table->string('destinationPlace')->nullable();
             $table->string('incoterms')->nullable();
-            $table->string('recordStatusRegistration')->nullable();  
-            $table->string('recordStatusAllocation')->nullable();  
-            $table->string('applicationStatus')->nullable();  
-            $table->string('requestRemarks')->nullable();  
-            $table->string('requestFiles')->nullable();  
-            $table->string('createdBy')->nullable();  
-            $table->string('updatedBy')->nullable();  
+            $table->string('recordStatusRegistration')->nullable();
+            $table->string('recordStatusAllocation')->nullable();
+            $table->string('applicationStatus')->nullable();
+            $table->string('requestRemarks')->nullable();
+            $table->string('requestFiles')->nullable();
+            $table->string('createdBy')->nullable();
+            $table->string('updatedBy')->nullable();
             $table->timestamps();
         });
     }

@@ -45,17 +45,24 @@
                         <td class="!text-center md:table-cell">
                             <x-bladewind::dropmenu>
                                 <x-bladewind::dropmenu-item>
-                                    <x-bladewind::button size="tiny" type="secondary" icon="arrow-right">
-                                        <a href="{{ route('fcy-request.authorize', $fcyRequest->id) }}" class="btn btn-secondary">Approve</a>
-                                    </x-bladewind::button>
-                                </x-bladewind::dropmenu-item>
-                                <x-bladewind::dropmenu-item>
-                                    <x-bladewind::button size="tiny" type="secondary" icon="trash">
-                                        <a href="{{ route('fcy-request.reject', $fcyRequest->id) }}" class="btn btn-warning">Reject</a>
+                                    <x-bladewind::button size="tiny" type="secondary" icon="pencil">
+                                        <a href="{{ route('fcy-request.edit', $fcyRequest) }}"
+                                            class="btn btn-warning">Edit</a>
                                     </x-bladewind::button>
                                 </x-bladewind::dropmenu-item>
 
                                 <x-bladewind::dropmenu-item>
+                                    <x-bladewind::button size="tiny" type="secondary" icon="arrow-right">
+                                        <a href="{{ route('fcy-request.showAuthReg', $fcyRequest->id) }}" class="btn btn-secondary">Approve</a>
+                                    </x-bladewind::button>
+                                </x-bladewind::dropmenu-item>
+                                <x-bladewind::dropmenu-item>
+                                    <x-bladewind::button size="tiny" type="secondary" icon="trash">
+                                        <a href="{{ route('fcy-request.showRejectReg', $fcyRequest->id) }}" class="btn btn-warning">Reject</a>
+                                    </x-bladewind::button>
+                                </x-bladewind::dropmenu-item>
+
+                                {{-- <x-bladewind::dropmenu-item>
                                     <form action="" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
@@ -63,7 +70,7 @@
                                             icon="trash" can-submit="true"
                                             onclick="return confirm('Are you sure you want to delete this case?')">Delete</x-bladewind::button>
                                     </form>
-                                </x-bladewind::dropmenu-item>
+                                </x-bladewind::dropmenu-item> --}}
                             </x-bladewind::dropmenu>
                         </td>
                     </tr>
