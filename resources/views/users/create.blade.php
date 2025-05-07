@@ -12,7 +12,12 @@
         {!! session('error') !!}
     @endif
     <?php
-    $roles = [['label' => 'Admin', 'value' => 'ADMIN'], ['label' => 'IBD Officer', 'value' => 'OFFICER'], ['label' => 'IBD Manager', 'value' => 'MANAGER']];
+    $roles = [
+        ['label' => 'Admin', 'value' => 'ADMIN'], 
+        ['label' => 'Excutive Secretery', 'value' => 'MAKER'], 
+        ['label' => 'Verifier', 'value' => 'OFFICER'], 
+        ['label' => 'Authorizer', 'value' => 'MANAGER'],
+    ];
     ?>
 
     <x-bladewind.card>

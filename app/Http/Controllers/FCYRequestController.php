@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\settings;
 use App\Models\Branch;
+use Illuminate\Support\Facades\Log;
 
 class FCYRequestController extends Controller
 {
@@ -47,7 +48,7 @@ class FCYRequestController extends Controller
         $incotermsList = incoterms::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
-        $currentDate = now()->format('Ymd'); // Get the current date in YYYYMMDD format
+        $currentDate = now()->format('Y'); // Get the current date in YYYY format
         $idSequence = settings::where('shortCode', 'IDG')->value('value'); // Fetch the current sequence value from settings
         $idReference = 'SKB' . $idSequence . $currentDate; // Concatenate to form the ID reference
         //- where('status', 'ACTIVE')
@@ -60,58 +61,70 @@ class FCYRequestController extends Controller
     public function store(Request $request)
     {
         // Validate the request data
-        $request->validate([
-            'dateOfApplication' => 'required|date',
-            'applicantName' => 'nullable|string|max:255',
-            'branchName' => 'nullable|string|max:255',
-            'applicantAddress' => 'nullable|string|max:255',
-            'telNumber' => 'nullable|string|max:20',
-            'phoneNumber' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'NBEAccountNumber' => 'nullable|string|max:50',
-            'descriptionOfGoodService' => 'nullable|string|max:255',
-            'currencyType' => 'nullable|string|max:10',
-            'performaAmount' => 'nullable|numeric|min:0',
-            'modeOfPayment' => 'nullable|string|max:50',
-            'shipmentPlace' => 'nullable|string|max:255',
-            'destinationPlace' => 'nullable|string|max:255',
-            'incoterms' => 'nullable|string|max:50',
-            'requestRemarks' => 'nullable|string|max:255',
-            // 'requestFiles' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            // 'createdBy' => 'required|string|max:255',
-        ]);
+        try {
+            $request->validate([
+                'idReference' => [
+                    'required',
+                    'unique:fcy_requests'
+                ],
+                'performaInvoiceNumber' => [
+                    'required',
+                    'unique:fcy_requests',
 
-        // Create a new FCY_Request instance
-        $data = $request->all();
-        if ($request->hasFile('requestFiles')) {
-            $file = $request->file('requestFiles');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('storage/uploads/fcyRequestFiles/'), $filename);
-            $data['requestFiles'] = 'uploads/fcyRequestFiles/' . $filename;
-        } else {
-            $data['requestFiles'] = null; // Set to null if no file is uploaded
-        }
-        $data['recordStatusRegistration'] = 'INAU'; // Set default record status
+                ],
+                'dateOfApplication' => 'required|date',
+                'applicantName' => 'nullable|string|max:255',
+                'branchName' => 'nullable|string|max:255',
+                'applicantAddress' => 'nullable|string|max:255',
+                'telNumber' => 'nullable|string|max:20',
+                'phoneNumber' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:255',
+                'NBEAccountNumber' => 'nullable|string|max:50',
+                'tinNumber' => 'nullable',
+                'descriptionOfGoodService' => 'nullable|string|max:255',
+                'currencyType' => 'nullable|string|max:10',
+                'performaAmount' => 'nullable|numeric|min:0',
+                'modeOfPayment' => 'nullable|string|max:50',
+                'shipmentPlace' => 'nullable|string|max:255',
+                'destinationPlace' => 'nullable|string|max:255',
+                'incoterms' => 'nullable|string|max:50',
+                'requestRemarks' => 'nullable|string|max:255',
+            ]);
 
-        $data['createdBy'] = Auth::id();
-        // file upload handling
+            // Create a new FCY_Request instance
+            $data = $request->all();
+            if ($request->hasFile('requestFiles')) {
+                $file = $request->file('requestFiles');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('storage/uploads/fcyRequestFiles/'), $filename);
+                $data['requestFiles'] = 'uploads/fcyRequestFiles/' . $filename;
+            } else {
+                $data['requestFiles'] = null; // Set to null if no file is uploaded
+            }
+            $data['recordStatusRegistration'] = 'INAU'; // Set default record status
 
-        // Save the FCY_Request instance to the database
-        FCY_Request::create($data);
-        // Redirect to the index page with a success message
-        // show sucess notifiation
-        // check if the request was successful
-        if ($data) {
-            // settings::where('shortCode', 'IDG')->increment('value');
+            $data['createdBy'] = Auth::id();
+            // file upload handling
+
+            // Save the FCY_Request instance to the database
+            FCY_Request::create($data);
+
+
+            // Redirect to the index page with a success message
+            // show sucess notifiation
+            // check if the request was successful
+
             settings::where('shortCode', 'IDG')
                 ->update([
                     'value' => DB::raw("LPAD(CAST(CAST(value AS INTEGER) + 1 AS TEXT), 5, '0')"),
                 ]);
             return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('success', "<script>showNotification('FCY Request', 'Request Registered Successfully')</script>");
-        } else {
-            return redirect()->route('fcy-request.listUnauthorizedRequests')
-                ->with('error', "<script>showNotification('FCY Request', 'Request Registration Failed')</script>");
+        } catch (\Exception $e) {
+            Log::error('Error While Registring Request: ' . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with('error', "<script>showNotification('FCY - Request', 'Request Registration Failed: {$e->getMessage()}', 'error')</script>");
         }
     }
 
@@ -187,8 +200,17 @@ class FCYRequestController extends Controller
     public function edit(FCY_Request $fCY_Request)
     {
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        $currencyList = currencies::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
         // redirect to edit.blade.php file to update existing requests
-        return view('fcy-request.edit', compact('fCY_Request', 'branchs'));
+        return view('fcy-request.edit', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
     }
 
     /**
@@ -197,49 +219,61 @@ class FCYRequestController extends Controller
     public function update(Request $request, FCY_Request $fCY_Request)
     {
         // Validate the request data
-        $request->validate([
-            'dateOfApplication' => 'required|date',
-            'applicantName' => 'nullable|string|max:255',
-            'branchName' => 'nullable|string|max:255',
-            'applicantAddress' => 'nullable|string|max:255',
-            'telNumber' => 'nullable|string|max:20',
-            'phoneNumber' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'NBEAccountNumber' => 'nullable|string|max:50',
-            'descriptionOfGoodService' => 'nullable|string|max:255',
-            'currencyType' => 'nullable|string|max:10',
-            'performaAmount' => 'nullable|numeric|min:0',
-            'modeOfPayment' => 'nullable|string|max:50',
-            'shipmentPlace' => 'nullable|string|max:255',
-            'destinationPlace' => 'nullable|string|max:255',
-            'incoterms' => 'nullable|string|max:50',
-            'requestRemarks' => 'nullable|string|max:255',
-            // 'requestFiles' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            // 'createdBy' => 'required|string|max:255',
-        ]);
-        $data = $request->all();
-        if ($request->hasFile('requestFiles')) {
-            $file = $request->file('requestFiles');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('storage/uploads/fcyRequestFiles/'), $filename);
-            $data['requestFiles'] = 'uploads/fcyRequestFiles/' . $filename;
-        } else {
-            $data['requestFiles'] = $fCY_Request->requestFiles; // Set to null if no file is uploaded
-        }
-        $data['recordStatusRegistration'] = 'INAU';
-         $data['recordStatusAllocation'] = '';
+        try {
+            $request->validate([
+                'performaInvoiceNumber' => [
+                    'required',
+                    'unique:fcy_requests,performaInvoiceNumber,' . $fCY_Request->id,
+                ],
+                'idReference' => 'required',
+                'dateOfApplication' => 'required|date',
+                'applicantName' => 'nullable|string|max:255',
+                'branchName' => 'nullable|string|max:255',
+                'applicantAddress' => 'nullable|string|max:255',
+                'telNumber' => 'nullable|string|max:20',
+                'phoneNumber' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:255',
+                'NBEAccountNumber' => 'nullable|string|max:50',
+                'descriptionOfGoodService' => 'nullable|string|max:255',
+                'currencyType' => 'nullable|string|max:10',
+                'performaAmount' => 'nullable|numeric|min:0',
+                'modeOfPayment' => 'nullable|string|max:50',
+                'shipmentPlace' => 'nullable|string|max:255',
+                'destinationPlace' => 'nullable|string|max:255',
+                'incoterms' => 'nullable|string|max:50',
+                'requestRemarks' => 'nullable|string|max:255',
+                // 'requestFiles' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                // 'createdBy' => 'required|string|max:255',
+            ]);
+            $data = $request->all();
+            if ($request->hasFile('requestFiles')) {
+                $file = $request->file('requestFiles');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('storage/uploads/fcyRequestFiles/'), $filename);
+                $data['requestFiles'] = 'uploads/fcyRequestFiles/' . $filename;
+            } else {
+                $data['requestFiles'] = $fCY_Request->requestFiles; // Set to null if no file is uploaded
+            }
+            $data['recordStatusRegistration'] = 'INAU';
+            $data['recordStatusAllocation'] = '';
 
-        $data['updatedBy'] = Auth::id();
-        // file upload handling
+            $data['updatedBy'] = Auth::id();
+            // file upload handling
 
-        // Save the FCY_Request instance to the database
-        $fCY_Request->update($data);
-        if ($data) {
+            // Save the FCY_Request instance to the database
+            $fCY_Request->update($data);
+            // if ($data) {
             return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('success', "<script>showNotification('FCY Request', 'Request Updated Successfully')</script>");
-        } else {
-            return redirect()->route('fcy-request.listUnauthorizedRequests')
-                ->with('error', "<script>showNotification('FCY Request', 'Request Update Failed')</script>");
+            // } else {
+            //     return redirect()->route('fcy-request.listUnauthorizedRequests')
+            //         ->with('error', "<script>showNotification('FCY Request', 'Request Update Failed')</script>");
+            // }
+        } catch (\Exception $e) {
+            Log::error('Error While Registring Request: ' . $e->getMessage(), [
+                'exception' => $e
+            ]);
+            return redirect()->back()->with('error', "<script>showNotification('FCY - Request', 'Request Registration Failed: {$e->getMessage()}', 'error')</script>");
         }
     }
 
@@ -262,16 +296,26 @@ class FCYRequestController extends Controller
     }
     public function authorizeRequest($id)
     {
+
+
         // Find the request by ID
         $fcyRequest = FCY_Request::findOrFail($id);
         // Update the record status to 'AUTH'
-        $fcyRequest->recordStatusRegistration = 'AUTH';
-        $fcyRequest->recordStatusAllocation = 'UNAPPROVED'; /// update the status as un approved
-        $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
-        $fcyRequest->save();
-        // Redirect back with a success message
-        return redirect()->route('fcy-request.listUnauthorizedRequests')
-            ->with('success', "<script>showNotification('FCY Request', 'Request Authorized Successfully')</script>");
+        //check if the authorizer is the same user
+        if ($fcyRequest->createdBy !== Auth::id()) {
+            if (Auth::user()->userRole !== 'OFFICER') {
+                return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Only OFFICER role can authorize requests', 'error')</script>");
+            }
+            $fcyRequest->recordStatusRegistration = 'AUTH';
+            $fcyRequest->recordStatusAllocation = 'UNAPPROVED'; /// update the status as un approved
+            $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
+            $fcyRequest->save();
+            // Redirect back with a success message
+            return redirect()->route('fcy-request.listUnauthorizedRequests')
+                ->with('success', "<script>showNotification('FCY Request', 'Request Authorized Successfully')</script>");
+        } else {
+            return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Maker and Checker User is the Same', 'error')</script>");
+        }
     }
     public function rejectRequest($id)
     {

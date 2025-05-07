@@ -26,15 +26,28 @@
         <x-slot name="icon">
             <x-icons.forex class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
         </x-slot>
+        @switch(auth()->user()->userRole)
+            @case('ADMIN')
+                <x-sidebar.sublink title="Request Registration" href="{{ route('fcy-request.create') }}" :active="request()->routeIs('fcy-request.create')" />
+            @break
 
-        <x-sidebar.sublink title="Request Registration" href="{{ route('fcy-request.create') }}" :active="request()->routeIs('fcy-request.create')" />
+            @default
+        @endswitch
         <x-sidebar.sublink title="Approve Request (Registration)"
             href="{{ route('fcy-request.listUnauthorizedRequests') }}" :active="request()->routeIs('fcy-request.listUnauthorizedRequests')" />
 
-        <x-sidebar.sublink title="Approve Request (Allocation)" href="{{ route('fcy-request.listAuthorizedRequests') }}"
-            :active="request()->routeIs('fcy-request.listAuthorizedRequests')" />
+        @switch(auth()->user()->userRole)
+            @case('ADMIN')
+                <x-sidebar.sublink title="Approve Request (Allocation)" href="{{ route('fcy-request.listAuthorizedRequests') }}"
+                    :active="request()->routeIs('fcy-request.listAuthorizedRequests')" />
 
-        <x-sidebar.sublink title="Request Lists " href="{{ route('fcy-request.index') }}" :active="request()->routeIs('fcy-request.index')" />
+                <x-sidebar.sublink title="Request Lists " href="{{ route('fcy-request.index') }}" :active="request()->routeIs('fcy-request.index')" />
+            @break
+
+            @default
+        @endswitch
+
+
     </x-sidebar.dropdown>
 
     <x-sidebar.dropdown title="Reports" :active="Str::startsWith(request()->route()->uri(), 'reports')">

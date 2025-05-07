@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
-class FCY_Request extends Model
+class FCY_Request extends Authenticatable implements AuditableContract
 {
-    use HasFactory;
+    use HasFactory, Notifiable, Auditable, HasRoles;
     protected $table = 'fcy_requests';
     // The primary key is 'id' by default, so we don't need to specify it unless it's different.
 

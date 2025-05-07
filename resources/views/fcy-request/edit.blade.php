@@ -6,42 +6,15 @@
             </h2>
         </div>
     </x-slot>
-    {{-- @if (session('success'))
+    <x-bladewind.notification />
+    @if (session('success'))
         {!! session('success') !!}
-
     @endif
+
     @if (session('error'))
         {!! session('error') !!}
-    @endif --}}
-    <?php
-    $incotermList = [['label' => 'Cost and Freight', 'value' => 'CFR'], ['label' => ' Cost Insurance and Freight', 'value' => 'CIF'], ['label' => 'Ex Works', 'value' => 'EXW'], ['label' => 'Free Carrier', 'value' => 'FCA'], ['label' => 'Free Alongside Ship', 'value' => 'FAS'], ['label' => 'Free On Board', 'value' => 'FOB'], ['label' => 'Carriage Paid To', 'value' => 'CPT'], ['label' => 'Carriage and Insurance Paid To', 'value' => 'CIP'], ['label' => 'Delivered at Terminal', 'value' => 'DAT'], ['label' => 'Delivered at Place', 'value' => 'DAP'], ['label' => 'Delivered Duty Paid', 'value' => 'DDP']];
-    $currencyList = [
-        ['label' => 'US Dollar', 'value' => 'USD'],
-        ['label' => 'Euro', 'value' => 'EUR'],
-        ['label' => 'British pound', 'value' => 'GBP'],
-        ['label' => 'Japanese yen', 'value' => 'JPY'],
-        ['label' => 'Renminbi', 'value' => 'CNY'],
-        ['label' => 'Indian rupee', 'value' => 'INR'],
-        ['label' => 'Australian dollar', 'value' => 'AUD'],
-        ['label' => 'Canadian dollar', 'value' => 'CAD'],
-        ['label' => 'Swiss franc', 'value' => 'CHF'],
-        ['label' => 'Hong Kong dollar', 'value' => 'HKD'],
-        ['label' => 'Singapore dollar', 'value' => 'SGD'],
-        ['label' => 'New Zealand dollar', 'value' => 'NZD'],
-        ['label' => 'South Korean won', 'value' => 'KRW'],
-        ['label' => 'Brazilian real', 'value' => 'BRL'],
-        ['label' => 'Mexican peso', 'value' => 'MXN'],
-        ['label' => 'South African rand', 'value' => 'ZAR'],
-        ['label' => 'Turkish lira', 'value' => 'TRY'],
-        ['label' => 'Russian ruble', 'value' => 'RUB'],
-        ['label' => 'Saudi riyal', 'value' => 'SAR'],
-        ['label' => 'United Arab Emirates dirham', 'value' => 'AED'],
-        ['label' => 'Indonesian rupiah', 'value' => 'IDR'],
-        ['label' => 'Thai baht', 'value' => 'THB'],
-    ];
-    $modeOfPaymentList = [['label' => 'Cash-in-Advance', 'value' => 'CAD'], ['label' => 'Letters of Credit', 'value' => 'LC'], ['label' => 'Documentary Collections', 'value' => 'DC'], ['label' => 'Open Account', 'value' => 'OA'], ['label' => 'Consignment', 'value' => 'CO']];
-    ?>
-    <x-bladewind.notification />
+    @endif
+    
     <x-bladewind.card>
 
         <form id="fcy-request-form" class="request-form-update" action="{{ route('fcy-request.update', $fCY_Request) }}"
@@ -55,6 +28,8 @@
             @csrf
             @method('PUT')
             <x-bladewind::card title="General Details">
+                <x-bladewind::input name="idReference" required="true" readonly="true" label="Applicant Name"
+                value="{{ $fCY_Request->idReference ?? '' }}" error_message="The Field Cannot be empty" />
 
                 <div class="grid grid-cols-2 gap-4">
                     <x-bladewind::datepicker name="dateOfApplication" required="true" label="Date of Application"
@@ -138,7 +113,7 @@
 
                 </div>
                 <div class="grid grid-cols-1">
-                    <x-bladewind::dropdown name="modeOfPayment" :data="$modeOfPaymentList" placeholder="Mode Of Payment"
+                    <x-bladewind::dropdown name="modeOfPayment" :data="$modeOfPaymentsList" placeholder="Mode Of Payment"
                         selected_value="{{ $fCY_Request->modeOfPayment ?? '' }}" required="true"
                         error_message="This Field is required" show_error_inline="true" />
                 </div>
@@ -150,7 +125,7 @@
                         error_message="The Field Cannot be empty" />
                 </div>
                 <div class="grid grid-cols-1">
-                    <x-bladewind::dropdown name="incoterms" :data="$incotermList" placeholder="Incoterms" required="true"
+                    <x-bladewind::dropdown name="incoterms" :data="$incotermsList" placeholder="Incoterms" required="true"
                         selected_value="{{ $fCY_Request->incoterms ?? '' }}" error_message="This Field is required"
                         show_error_inline="true" />
                 </div>

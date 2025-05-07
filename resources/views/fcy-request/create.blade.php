@@ -6,14 +6,16 @@
             </h2>
         </div>
     </x-slot>
+    <x-bladewind.notification />
     @if (session('success'))
         {!! session('success') !!}
     @endif
+
     @if (session('error'))
         {!! session('error') !!}
     @endif
 
-    <x-bladewind.notification />
+
     <x-bladewind.card>
 
         <form id="fyr-request-form" class="request-form" action="{{ route('fcy-request.store') }}" method="post"
@@ -70,7 +72,7 @@
 
                 <div class="grid grid-cols-2 gap-4">
 
-                    <x-bladewind::input name="itemName" required="true"  label="Item Name"
+                    <x-bladewind::input name="itemName" required="true" label="Item Name"
                         error_message="This Field is required" show_error_inline="true" />
 
                     <x-bladewind::input name="itemQuantity" required="true" label="Item Quantity"

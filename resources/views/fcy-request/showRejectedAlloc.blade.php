@@ -7,7 +7,14 @@
         </div>
     </x-slot>
 
-    <x-bladewind.notification />
+    <<x-bladewind.notification />
+    @if (session('success'))
+        {!! session('success') !!}
+    @endif
+
+    @if (session('error'))
+        {!! session('error') !!}
+    @endif
     <x-bladewind.card>
 
         <form id="fcy-request-form" class="request-form-update"
@@ -22,6 +29,8 @@
             {{-- @csrf
             @method('PUT') --}}
             <x-bladewind::card title="General Details">
+                <x-bladewind::input name="idReference" readonly="true" label="Id Reference"
+                    value="{{ $fCY_Request->idReference ?? '' }}" />
 
                 <div class="grid grid-cols-2 gap-4">
                     <x-bladewind::input name="dateOfApplication" readonly="true" label="Date of Application"
