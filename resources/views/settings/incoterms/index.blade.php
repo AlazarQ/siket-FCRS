@@ -41,6 +41,7 @@
 
                                 <x-bladewind::dropmenu-item>
                                     <x-bladewind::button size="tiny" type="secondary" icon="pencil">
+                                        <a href="{{ route('settings.incoterms.edit', $incoterm)}}"/>
                                         Edit
                                     </x-bladewind::button>
                                 </x-bladewind::dropmenu-item>
@@ -51,6 +52,10 @@
                     </tr>
                 @endforeach
             </x-bladewind::table>
+            <!-- Pagination -->
+            <div class="mt-4">
+                {{ $incoterms->links() }}
+            </div>
         </x-bladewind::card>
     </div>
 </x-app-layout>

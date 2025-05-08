@@ -8,7 +8,7 @@ use OwenIt\Auditing\Auditable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class incoterms extends Authenticatable implements AuditableContract
+class Incoterms extends Authenticatable implements AuditableContract
 {
     use  Notifiable, Auditable, HasRoles;
     protected $table = 'incoterm_lists';

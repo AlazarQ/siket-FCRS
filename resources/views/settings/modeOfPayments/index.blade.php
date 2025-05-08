@@ -41,6 +41,7 @@
                             <x-bladewind::dropmenu>
                                 <x-bladewind::dropmenu-item>
                                     <x-bladewind::button size="tiny" type="secondary" icon="pencil">
+                                        <a href="{{ route('settings.modeOfPayments.edit', $modeOfPayment)}}"/>
                                         Edit
                                     </x-bladewind::button>
                                 </x-bladewind::dropmenu-item>

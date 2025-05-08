@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\FCY_Request;
 use App\Http\Controllers\Controller;
-use App\Models\currencies;
-use App\Models\incoterms;
-use App\Models\modeOfPayments;
+use App\Models\Currencies;
+use App\Models\Incoterms;
+use App\Models\ModeOfPayments;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Models\settings;
+use App\Models\Settings;
 use App\Models\Branch;
 use Illuminate\Support\Facades\Log;
 
@@ -27,7 +27,7 @@ class FCYRequestController extends Controller
             ->where('recordStatusAllocation', 'APPROVED')->get();
         // $fcyRequests = FCY_Request::all();
         // Pass the records to the view
-        $currencyList = currencies::select('description as label', 'shortCode as value')->get();
+        $currencyList = Currencies::select('description as label', 'shortCode as value')->get();
         //- where('status', 'ACTIVE')
         return view('fcy-request.index', compact('fcyRequests', 'currencyList'));
         // return view('fcy-request.index');
@@ -39,17 +39,17 @@ class FCYRequestController extends Controller
     public function create(FCY_Request $fCY_Request)
     {
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
-        $currencyList = currencies::select('description as label', 'shortCode as value')
+        $currencyList = Currencies::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
-        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
         $incotermsList = incoterms::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
         $currentDate = now()->format('Y'); // Get the current date in YYYY format
-        $idSequence = settings::where('shortCode', 'IDG')->value('value'); // Fetch the current sequence value from settings
+        $idSequence = Settings::where('shortCode', 'IDG')->value('value'); // Fetch the current sequence value from settings
         $idReference = 'SKB' . $idSequence . $currentDate; // Concatenate to form the ID reference
         //- where('status', 'ACTIVE')
         return view('fcy-request.create', compact('currencyList', 'modeOfPaymentsList', 'incotermsList', 'idReference', 'branchs'));
@@ -114,7 +114,7 @@ class FCYRequestController extends Controller
             // show sucess notifiation
             // check if the request was successful
 
-            settings::where('shortCode', 'IDG')
+            Settings::where('shortCode', 'IDG')
                 ->update([
                     'value' => DB::raw("LPAD(CAST(CAST(value AS INTEGER) + 1 AS TEXT), 5, '0')"),
                 ]);
@@ -134,10 +134,10 @@ class FCYRequestController extends Controller
     public function showAuthAlloc(FCY_Request $fCY_Request)
     {
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
-        $currencyList = currencies::select('description as label', 'shortCode as value')
+        $currencyList = Currencies::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
-        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
         $incotermsList = incoterms::select('description as label', 'shortCode as value')
@@ -150,10 +150,10 @@ class FCYRequestController extends Controller
     public function showAuthReg(FCY_Request $fCY_Request)
     {
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
-        $currencyList = currencies::select('description as label', 'shortCode as value')
+        $currencyList = Currencies::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
-        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
         $incotermsList = incoterms::select('description as label', 'shortCode as value')
@@ -165,10 +165,10 @@ class FCYRequestController extends Controller
     public function showRejectedAlloc(FCY_Request $fCY_Request)
     {
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
-        $currencyList = currencies::select('description as label', 'shortCode as value')
+        $currencyList = Currencies::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
-        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
         $incotermsList = incoterms::select('description as label', 'shortCode as value')
@@ -181,10 +181,10 @@ class FCYRequestController extends Controller
     public function showRejectReg(FCY_Request $fCY_Request)
     {
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
-        $currencyList = currencies::select('description as label', 'shortCode as value')
+        $currencyList = Currencies::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
-        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
         $incotermsList = incoterms::select('description as label', 'shortCode as value')
@@ -200,10 +200,10 @@ class FCYRequestController extends Controller
     public function edit(FCY_Request $fCY_Request)
     {
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
-        $currencyList = currencies::select('description as label', 'shortCode as value')
+        $currencyList = Currencies::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
-        $modeOfPaymentsList = modeOfPayments::select('description as label', 'shortCode as value')
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')
             ->where('status', 'ACTIVE')
             ->get();
         $incotermsList = incoterms::select('description as label', 'shortCode as value')
@@ -400,6 +400,9 @@ class FCYRequestController extends Controller
 
     public function show(FCY_Request $fCY_Request)
     {
-        return view('fcy-request.show', compact('FCY_Request $fCY_Request'));
+        $currencyList = Currencies::select('description as label', 'shortCode as value')->get();
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')->get();
+        return view('fcy-request.show', compact('fCY_Request', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
     }
 }

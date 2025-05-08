@@ -42,6 +42,7 @@
                         <td class="text-left">{{ $fcyRequest->NBEAccountNumber }}</td>
                         <td class="text-left">{{ $fcyRequest->currencyType }}</td>
                         <td class="text-left">{{ $fcyRequest->modeOfPayment }}</td>
+                        {{-- <td class="text-left">{{ $fcyRequest->modeOfPayment->description }}</td> --}}
                         {{-- <td class="text-left">{{ $fcyRequest->descriptionOfGoodService }}</td> --}}
                         <td class="!text-center md:table-cell">
                             <x-bladewind::dropmenu>

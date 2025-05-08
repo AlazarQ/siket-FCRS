@@ -107,6 +107,9 @@ Route::middleware('auth')->group(function () {
         ->name('fcy-request.rejectedFcyRequests');
 
 
+
+
+
     ///// Routes for request authorization and rejection
     Route::get('/fcy-request/{fCY_Request}/showAuthAlloc', [FCYRequestController::class, 'showAuthAlloc'])->name('fcy-request.showAuthAlloc');
     Route::get('/fcy-request/{fCY_Request}/showAuthReg', [FCYRequestController::class, 'showAuthReg'])->name('fcy-request.showAuthReg');
@@ -141,6 +144,25 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/settings/modeOfPayments/store', [SettingsController::class, 'modeOfPaymentSettingStore'])
         ->name('settings.modeOfPayments.store');
+
+    Route::get('/settings/currency/edit/{currency}', [SettingsController::class, 'currencySettingsEdit'])
+        ->name('settings.currency.edit');
+
+    Route::get('/settings/modeOfPayments/edit/{modeOfPayments}', [SettingsController::class, 'modeOfPaymentSettingsEdit'])
+        ->name('settings.modeOfPayments.edit');
+
+    Route::get('/settings/incoterms/edit/{incoterms}', [SettingsController::class, 'incotermsSettingsEdit'])
+        ->name('settings.incoterms.edit');
+
+    Route::patch('/settings/currency/update/{currency}', [SettingsController::class, 'currencySettingsUpdate'])
+        ->name('settings.currency.update');
+
+    Route::patch('/settings/modeOfPayments/update/{modeOfPayments}', [SettingsController::class, 'modeOfPaymentSettingsUpdate'])
+        ->name('settings.modeOfPayments.update');
+
+    Route::patch('/settings/incoterms/update/{incoterms}', [SettingsController::class, 'incotermsSettingsUpdate'])
+        ->name('settings.incoterms.update');
+
 
     /// other settings Routes
     Route::get('/settings/fcy-Id-Settings', [SettingsController::class, 'idSequenceIndex'])

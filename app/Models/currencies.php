@@ -8,7 +8,7 @@ use OwenIt\Auditing\Auditable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class currencies extends Authenticatable implements AuditableContract
+class Currencies extends Authenticatable implements AuditableContract
 {
     use  Notifiable, Auditable, HasRoles;
     protected $table = 'currencies';

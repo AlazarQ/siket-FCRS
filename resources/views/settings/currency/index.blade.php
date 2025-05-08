@@ -43,6 +43,7 @@
 
                                 <x-bladewind::dropmenu-item>
                                     <x-bladewind::button size="tiny" type="secondary" icon="pencil">
+                                        <a href="{{ route('settings.currency.edit', $currency)}}"/>
                                         Edit
                                     </x-bladewind::button>
                                 </x-bladewind::dropmenu-item>
@@ -55,7 +56,7 @@
             </x-bladewind::table>
              <!-- Pagination -->
              <div class="mt-4">
-                {{ $currency->links() }}
+                {{ $currencyList->links() }}
             </div>
         </x-bladewind::card>
     </div>
