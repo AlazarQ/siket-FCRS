@@ -14,9 +14,9 @@
     <?php
     $roles = [
         ['label' => 'Admin', 'value' => 'ADMIN'], 
-        ['label' => 'Excutive Secretery', 'value' => 'MAKER'], 
-        ['label' => 'Verifier', 'value' => 'OFFICER'], 
-        ['label' => 'Authorizer', 'value' => 'MANAGER'],
+        ['label' => 'Excutive Secretery/Maker', 'value' => 'MAKER'], 
+        ['label' => 'Verifier/Officer', 'value' => 'OFFICER'], 
+        ['label' => 'Authorizer/Manager', 'value' => 'MANAGER'],
     ];
     ?>
 

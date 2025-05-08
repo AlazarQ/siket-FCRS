@@ -7,7 +7,7 @@
         </div>
     </x-slot>
 
-    <<x-bladewind.notification />
+    <x-bladewind.notification />
     @if (session('success'))
         {!! session('success') !!}
     @endif
@@ -139,7 +139,11 @@
             </x-bladewind::card>
 
             <div class="text-right">
-
+                <x-bladewind.button id="submit-btn" has_spinner="true" color="blue" can_submit="true"
+                    icon="arrow-left" class="mt-3">
+                    <a href="{{ route('fcy-request.listAuthorizedRequests') }}" class="btn btn-secondary" />
+                    Back
+                </x-bladewind.button>
                 <x-bladewind.button id="submit-btn" has_spinner="true" color="green" can_submit="true"
                     class="mt-3">
                     Approve

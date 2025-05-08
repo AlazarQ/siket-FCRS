@@ -15,11 +15,11 @@
                 List Of Registered FCy Requests.
             </p>
             {{-- <h1 class="text-2xl font-bold mb-4">Litigation Cases</h1> --}}
-            <div class="text-right">
+            {{-- <div class="text-right">
                 <x-bladewind::button has_spinner="true" name="save-user" onclick="showButtonSpinner('.save-user')">
                     <a href="{{ route('fcy-request.create') }}" class="btn btn-primary">New Request</a>
                 </x-bladewind::button>
-            </div><br>
+            </div><br> --}}
 
             <x-bladewind::table selectable="flase" divider="thin" name="branch_list" searchable="true" celled="false"
                 paginated="true" page_size="5" show_row_numbers="true" default_page="1"
@@ -47,7 +47,7 @@
                             <x-bladewind::dropmenu>
                                 <x-bladewind::dropmenu-item>
                                     <x-bladewind::button size="tiny" type="secondary" icon="eye">
-                                        <a href="" class="btn btn-secondary">View</a>
+                                        <a href="{{ route('fcy-request.show',$fcyRequest ) }}" class="btn btn-secondary">View</a>
                                     </x-bladewind::button>
                                 </x-bladewind::dropmenu-item>
                                 

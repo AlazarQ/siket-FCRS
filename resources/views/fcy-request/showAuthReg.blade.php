@@ -7,7 +7,7 @@
         </div>
     </x-slot>
 
-    <<x-bladewind.notification />
+    <x-bladewind.notification />
     @if (session('success'))
         {!! session('success') !!}
     @endif
@@ -25,8 +25,6 @@
             <p class="mt-3 mb-6 text-green-900/80 text-sm">
                 Approve FCY Request based on the details (Registration Stage).
             </p>
-            {{-- @csrf --}}
-            {{-- @method('PUT') --}}
             <x-bladewind::card title="General Details">
                 <x-bladewind::input name="idReference" readonly="true" label="Id Reference"
                     value="{{ $fCY_Request->idReference ?? '' }}" />
@@ -139,6 +137,11 @@
 
             <div class="text-right">
 
+                <x-bladewind.button id="submit-btn" has_spinner="true" color="blue" can_submit="true" icon="arrow-left"
+                    class="mt-3">
+                    <a href="{{ route('fcy-request.listUnauthorizedRequests') }}" class="btn btn-secondary" />
+                    Back
+                </x-bladewind.button>
                 <x-bladewind.button id="submit-btn" has_spinner="true" color="green" can_submit="true"
                     class="mt-3">
                     Approve

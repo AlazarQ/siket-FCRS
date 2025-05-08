@@ -137,37 +137,15 @@
                     selected_value="{{ $fCY_Request->requestRemarks ?? '' }}"
                     label="Request Remark"></x-bladewind.textarea>
             </x-bladewind::card>
-
             <div class="text-right">
+
                 <x-bladewind.button id="submit-btn" has_spinner="true" color="blue" can_submit="true"
                     icon="arrow-left" class="mt-3">
                     <a href="{{ route('fcy-request.listAuthorizedRequests') }}" class="btn btn-secondary" />
                     Back
-                </x-bladewind.button>
-                <x-bladewind.button id="submit-btn" has_spinner="true" color="green" can_submit="true"
-                    class="mt-3">
-                    Approve
                 </x-bladewind.button>
             </div>
         </form>
 
     </x-bladewind.card>
 </x-app-layout>
-<script>
-    dom_el('.request-form-update').addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (fcyRequest()) {
-            e.target.submit();
-        }
-    });
-
-    fcyRequest = () => {
-        if (validateForm('.request-form-update')) {
-            unhide('.btn-save .bw-spinner');
-            return true;
-        } else {
-            hide('.btn-save .bw-spinner');
-            return false;
-        }
-    }
-</script>

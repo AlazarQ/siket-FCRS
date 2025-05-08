@@ -64,18 +64,9 @@
                                         <x-bladewind::button size="tiny" icon="cogs" color="green"><a
                                                 href="{{ route('users.resetUserPasswordView', $user) }}"
                                                 class="btn btn-secondary">Reset Password</a></x-bladewind::button>
-                                        {{-- <form action="{{ route('users.resetUserPassword', $user) }}" method="POST"
-                                            class="inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <x-bladewind::button size="tiny" type="secondary" color="yellow"
-                                                icon="cogs" icon_left="true"
-                                                onclick="return confirm('Are you sure you want to Reset the user Password?')">
-                                                Reset Password
-                                            </x-bladewind::button>
-                                        </form> --}}
+                                        
                                     </x-bladewind::dropmenu-item>
-                                    <x-bladewind::dropmenu-item>
+                                    {{-- <x-bladewind::dropmenu-item>
                                         <form action="{{ route('users.destroy', $user) }}" method="POST"
                                             class="inline-block">
                                             @csrf
@@ -86,7 +77,7 @@
                                                 Delete
                                             </x-bladewind::button>
                                         </form>
-                                    </x-bladewind::dropmenu-item>
+                                    </x-bladewind::dropmenu-item> --}}
                                 </x-bladewind::dropmenu>
                             </td>
                         </tr>

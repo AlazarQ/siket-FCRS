@@ -262,13 +262,8 @@ class FCYRequestController extends Controller
 
             // Save the FCY_Request instance to the database
             $fCY_Request->update($data);
-            // if ($data) {
             return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('success', "<script>showNotification('FCY Request', 'Request Updated Successfully')</script>");
-            // } else {
-            //     return redirect()->route('fcy-request.listUnauthorizedRequests')
-            //         ->with('error', "<script>showNotification('FCY Request', 'Request Update Failed')</script>");
-            // }
         } catch (\Exception $e) {
             Log::error('Error While Registring Request: ' . $e->getMessage(), [
                 'exception' => $e
@@ -303,7 +298,7 @@ class FCYRequestController extends Controller
         // Update the record status to 'AUTH'
         //check if the authorizer is the same user
         if ($fcyRequest->createdBy !== Auth::id()) {
-            if (Auth::user()->userRole !== 'OFFICER') {
+            if (Auth::user()->userRole !== 'OFFICER' || Auth::user()->userRole !== 'ADMIN') {
                 return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Only OFFICER role can authorize requests', 'error')</script>");
             }
             $fcyRequest->recordStatusRegistration = 'AUTH';
@@ -320,6 +315,9 @@ class FCYRequestController extends Controller
     public function rejectRequest($id)
     {
         // Find the request by ID
+        if (Auth::user()->userRole === 'MAKER') {
+            return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Only OFFICER role can authorize requests', 'error')</script>");
+        }
         $fcyRequest = FCY_Request::findOrFail($id);
         // Update the record status to 'REJCT'
         $fcyRequest->recordStatusRegistration = 'REJCT';
@@ -398,5 +396,10 @@ class FCYRequestController extends Controller
         $rejectedFcyRequestsRegistration = FCY_Request::where('recordStatusRegistration', 'REJCT')->get();
         $rejectedFcyRequestsApplication = FCY_Request::where('applicationStatus', 'REJECTED')->get();
         return view('fcy-request.rejectedFcyRequests', compact('rejectedFcyRequestsRegistration', 'rejectedFcyRequestsApplication'));
+    }
+
+    public function show(FCY_Request $fCY_Request)
+    {
+        return view('fcy-request.show', compact('FCY_Request $fCY_Request'));
     }
 }

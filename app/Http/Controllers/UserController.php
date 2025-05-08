@@ -20,7 +20,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::where('recordStatus', 'ACTIVE')->get();
         return view('users.index', compact('users'));
     }
 
@@ -66,23 +66,20 @@ class UserController extends Controller
             $user->assignRole($request->userRole);
 
             return redirect()->route('users.index')->with('success', "<script>showNotification('User', 'User registered successfully','success')</script>");
-
-         
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation error: ' . json_encode($e->errors()));
-            $errors=$e->errors();
+            $errors = $e->errors();
             return redirect()->route('users.create')->with('error', "<script>showNotification('User', 'User Registration Failed. " . $e->getMessage() . "','error')</script>");
-           
         } catch (\Exception $e) {
             Log::error('Error creating user: ' . $e->getMessage());
-            
+
             session()->flash('notification', [
                 'title' => 'Registration Failed',
                 'message' => 'Failed to register user: ' . $e->getMessage(),
                 'type' => 'error'
             ]);
 
-           
+
             return redirect()->route('users.create')->with('error', "<script>showNotification('User', 'User Registration Failed. " . $e->getMessage() . "','error')</script>");
         }
     }
@@ -142,25 +139,35 @@ class UserController extends Controller
             ]);
             $userId = $user->id;
             // $updated = $user->update(['recordStatus' => '']);
-            $updated = User::where('id', $userId)
-                ->update(['recordStatus' => null]);
+            //check if the authorizer is the same user
+            if ($user->createdBy !== Auth::id()) {
+                if (Auth::user()->userRole === 'ADMIN' || Auth::user()->userRole === 'MANAGER') {
+                    $updated = User::where('id', $userId)
+                        ->update(['recordStatus' => 'ACTIVE', 'modifiedBy' => Auth::id()]);
 
-            if (!$updated) {
-                throw new \Exception('Update query returned false');
+                    if (!$updated) {
+                        throw new \Exception('Update query returned false');
+                    }
+
+                    // Refresh to verify update
+                    $user->refresh();
+                    Log::info('After update', [
+                        'new_status' => $user->recordStatus
+                    ]);
+
+                    return redirect()->route('users.index')->with('success', "<script>showNotification('User', 'User Authorized Successfully','success')</script>");
+                } else {
+                    return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Insufficient Privilages !!!', 'error')</script>");
+                }
+            } else {
+
+                return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Maker and Checker couldn't be Same !!!', 'error')</script>");
             }
-
-            // Refresh to verify update
-            $user->refresh();
-            Log::info('After update', [
-                'new_status' => $user->recordStatus
-            ]);
-
-            return redirect()->route('users.index')->with('success', "<script>showNotification('User', 'User Authorized Successfully','success')</script>");
         } catch (\Exception $e) {
             Log::error('Error authorizing user: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()->with('error', "<script>showNotification('User', 'User Authorization Failed','error')</script>");
+            return redirect()->back()->with('error', "<script>showNotification('User', 'User Authorization Failed ','error')</script>");
         }
     }
 
@@ -170,9 +177,18 @@ class UserController extends Controller
     public function rejectUser(Request $request, User $user)
     {
         try {
-            $user->delete();
+            if (
+                $user->createdBy !== Auth::id() &&
+                (Auth::id() === 'ADMIN' || Auth::id() === 'MANAGER')
+            ) {
 
-            return redirect()->route('users.index')->with('success', 'User rejected successfully.');
+                $user->delete();
+
+                return redirect()->route('users.index')->with('success', 'User rejected successfully.');
+            } else {
+
+                return redirect()->back()->with('error', "<script>showNotification('Request Rejection', 'Insufficient Privilages', 'error')</script>");
+            }
         } catch (\Exception $e) {
             Log::error('Error rejecting user: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Failed to reject user. Please try again.');
@@ -198,7 +214,8 @@ class UserController extends Controller
 
     //// function to reset user password
 
-    public function resetUserPasswordView(User $user) {
+    public function resetUserPasswordView(User $user)
+    {
         return view('users.resetUserPasswordView', compact('user'));
     }
     public function resetUserPasswordStore(Request $request, User $user)
@@ -212,8 +229,8 @@ class UserController extends Controller
             $data = $request->all();
             $data['remark'] = $request->remark;
             $data['password'] = Hash::make($request->password);
-            
-        
+
+
             $user->update($data);
 
             return redirect()->route('users.index')->with('success', "<script>showNotification('User', 'Password reset successfully to default password','success')</script>");
@@ -222,5 +239,4 @@ class UserController extends Controller
             return redirect()->back()->with('error', "<script>showNotification('User', 'Password reset failed','error')</script>");
         }
     }
-    
 }

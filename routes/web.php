@@ -113,6 +113,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/fcy-request/{fCY_Request}/showRejectedAlloc', [FCYRequestController::class, 'showRejectedAlloc'])->name('fcy-request.showRejectedAlloc');
     Route::get('/fcy-request/{fCY_Request}/showRejectReg', [FCYRequestController::class, 'showRejectReg'])->name('fcy-request.showRejectReg');
 
+    Route::get('/fcy-request/{fCY_Request}/show', [FCYRequestController::class, 'show'])->name('fcy-request.show');
+
 
     /// routes for settings 
     Route::get('/settings/currency', [SettingsController::class, 'currencySettingsIndex'])

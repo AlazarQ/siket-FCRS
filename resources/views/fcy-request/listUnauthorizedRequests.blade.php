@@ -15,11 +15,11 @@
                 List Of Registered Unauthorized FCy Requests.
             </p>
             {{-- <h1 class="text-2xl font-bold mb-4">Litigation Cases</h1> --}}
-            <div class="text-right">
+            {{-- <div class="text-right">
                 <x-bladewind::button has_spinner="true" name="save-user" onclick="showButtonSpinner('.save-user')">
                     <a href="{{ route('fcy-request.create') }}" class="btn btn-primary">New Request</a>
                 </x-bladewind::button>
-            </div><br>
+            </div><br> --}}
 
             <x-bladewind::table selectable="flase" divider="thin" name="branch_list"
                 no_data_message="Branch Data empty!!">

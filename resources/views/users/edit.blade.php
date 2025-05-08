@@ -7,7 +7,9 @@
         </div>
     </x-slot>
     <x-bladewind.notification />
-
+    <?php
+    $userStatus = [['label' => 'Active User', 'value' => 'ACTIVE'], ['label' => 'InActive - User', 'value' => 'INACTIVE']];
+    ?>
     <x-bladewind.card>
 
         <form id="users-edit-form" class="users-form" action="{{ route('users.update', $user) }}" method="post"
@@ -23,29 +25,35 @@
             <x-bladewind::input name="name" required="true" label="User Full Name" value="{{ $user->name }}"
                 error_message="Please Enter User Full Name" />
             <div class="flex gap-4">
-                <x-bladewind::input type="email" name="email" required="true" label="User Email" value="{{ $user->email }}"
-                    error_message="Please Enter users email address" />
+                <x-bladewind::input type="email" name="email" required="true" label="User Email"
+                    value="{{ $user->email }}" error_message="Please Enter users email address" />
 
-                <x-bladewind::input name="userName" required="true" label="User Name" numeric="false" value="{{ $user->userName }}"
-                    error_message="Please Enter users name" />
+                <x-bladewind::input name="userName" required="true" label="User Name" numeric="false"
+                    value="{{ $user->userName }}" error_message="Please Enter users name" />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <x-bladewind::select name="userBranch" required="true" :data="$branchs" label="Branch District" selected_value="{{ $user->userBranch }}" />
-                <x-bladewind::select name="userDistrict" required="true" :data="$districts" label="User District" selected_value="{{ $user->userDistrict }}" />
+                <x-bladewind::select name="userBranch" required="true" :data="$branchs" label="Branch District"
+                    selected_value="{{ $user->userBranch }}" />
+                <x-bladewind::select name="userDistrict" required="true" :data="$districts" label="User District"
+                    selected_value="{{ $user->userDistrict }}" />
             </div>
 
             <div class="flex gap-4">
-                <x-bladewind::radio-button label="Male" name="userGender" value="M" checked="{{ $user->userGender == 'M' }}" />
-                <x-bladewind::radio-button label="Female" name="userGender" value="F" checked="{{ $user->userGender == 'F' }}" />
+                <x-bladewind::radio-button label="Male" name="userGender" value="M"
+                    checked="{{ $user->userGender == 'M' }}" />
+                <x-bladewind::radio-button label="Female" name="userGender" value="F"
+                    checked="{{ $user->userGender == 'F' }}" />
             </div>
 
-            <div class="flex gap-4">
-                <x-bladewind::input name="userPhone" required="true" label="User Phone" prefix="+251" max="9" value="{{ $user->userPhone }}"
-                    error_message="The Field Cannot be empty" show_error_inline="true" />
+            <div class="grid grid-cols-2 gap-4">
+                <x-bladewind::input name="userPhone" required="true" label="User Phone" prefix="+251" max="9"
+                    value="{{ $user->userPhone }}" error_message="The Field Cannot be empty" show_error_inline="true" />
 
-                <x-bladewind::input name="userStatus" required="false" label="User Status" value="{{ $user->userStatus }}"
-                    error_message="The Field Cannot be empty" readonly="true" show_error_inline="true" />
+                <x-bladewind::select name="userStatus" required="true" :data="$userStatus" label="User Status"
+                    selected_value="{{ $user->userStatus }}" error_message="The Field Cannot be empty"
+                    show_error_inline="true" />
+
             </div>
 
             <x-bladewind.textarea required="true" name="remark" error_message="Write remark" show_error_inline="true"
