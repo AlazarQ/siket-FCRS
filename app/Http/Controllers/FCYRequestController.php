@@ -14,6 +14,10 @@ use Illuminate\Http\Request;
 use App\Models\Settings;
 use App\Models\Branch;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FCYRequestRegistration;
+use App\Mail\FCYRequestApproval;
+use App\Mail\FCYRequestAllocation;
 
 class FCYRequestController extends Controller
 {
@@ -118,6 +122,21 @@ class FCYRequestController extends Controller
                 ->update([
                     'value' => DB::raw("LPAD(CAST(CAST(value AS INTEGER) + 1 AS TEXT), 5, '0')"),
                 ]);
+
+            // Send email
+            try {
+                $recipients = DB::table('users')
+                    ->whereIn('userRole', ['ADMIN', 'MANAGER'])
+                    ->pluck('email')
+                    ->toArray();
+
+                Mail::to($recipients)->send(new FCYRequestRegistration($request));
+            } catch (\Exception $e) {
+                Log::error('Error While FCY Request registration : ' . $e->getMessage(), [
+                    'exception' => $e
+                ]);
+            }
+
             return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('success', "<script>showNotification('FCY Request', 'Request Registered Successfully')</script>");
         } catch (\Exception $e) {
@@ -294,13 +313,26 @@ class FCYRequestController extends Controller
 
         $fcyRequest = FCY_Request::findOrFail($id);
         if ($fcyRequest->createdBy !== Auth::id()) {
-            if (Auth::user()->userRole !== 'OFFICER' || Auth::user()->userRole !== 'ADMIN') {
+            if (Auth::user()->userRole !== 'OFFICER' && Auth::user()->userRole !== 'ADMIN') {
                 return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Only OFFICER role can authorize requests', 'error')</script>");
             }
             $fcyRequest->recordStatusRegistration = 'AUTH';
             $fcyRequest->recordStatusAllocation = 'UNAPPROVED'; /// update the status as un approved
             $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
             $fcyRequest->save();
+            // Send email
+            try {
+                $recipients = DB::table('users')
+                    ->whereIn('userRole', ['ADMIN', 'MANAGER'])
+                    ->pluck('email')
+                    ->toArray();
+
+                Mail::to($recipients)->send(new FCYRequestApproval($fcyRequest));
+            } catch (\Exception $e) {
+                Log::error('Error While FCY Request registration approval : ' . $e->getMessage(), [
+                    'exception' => $e
+                ]);
+            }
             // Redirect back with a success message
             return redirect()->route('fcy-request.listUnauthorizedRequests')
                 ->with('success', "<script>showNotification('FCY Request', 'Request Authorized Successfully')</script>");
@@ -344,6 +376,21 @@ class FCYRequestController extends Controller
         $fcyRequest->recordStatusAllocation = 'APPROVED';
         $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
         $fcyRequest->save();
+
+        // Send email
+        try {
+
+            $recipients = DB::table('users')
+                ->whereIn('userRole', ['ADMIN', 'MANAGER'])
+                ->pluck('email')
+                ->toArray();
+
+            Mail::to($recipients)->send(new FCYRequestAllocation($fcyRequest));
+        } catch (\Exception $e) {
+            Log::error('Error While FCY Request Allocation - Approval : ' . $e->getMessage(), [
+                'exception' => $e
+            ]);
+        }
         // Redirect back with a success message
         return redirect()->route('fcy-request.listAuthorizedRequests')
             ->with('success', "<script>showNotification('FCY Request', 'Allocation Request Approved Successfully')</script>");
@@ -362,11 +409,39 @@ class FCYRequestController extends Controller
             ->with('success', "<script>showNotification('FCY Request', 'Allocation Request Rejected Successfully')</script>");
     }
     //////////////// reports ///////////////////////
-    public function allFcyRequests()
+    public function allFcyRequests(Request $request)
     {
+        $idReference = $request->query('idReference');
+        $applicantName = $request->query('applicantName');
+        $performaInvoiceNumber = $request->query('performaInvoiceNumber');
+        $currencyType = $request->query('currencyType');
+
+        $dateOfApplication = $request->query('dateOfApplication');
+        $startDate = $request->query('startDate');
+        $endDate = $request->query('endDate');
+
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
-        $allFcyRequest = FCY_Request::all();
-        return view('fcy-request.allFcyRequests', compact('allFcyRequest'));
+
+        $allFcyRequest = FCY_Request::query()
+            ->when($idReference, function ($query, $idReference) {
+                return $query->where('idReference', 'like', "%{$idReference}%");
+            })
+            ->when($applicantName, function ($query, $applicantName) {
+                return $query->where('applicantName', 'like', "%{$applicantName}%");
+            })
+            ->when($performaInvoiceNumber, function ($query, $performaInvoiceNumber) {
+                return $query->where('performaInvoiceNumber', 'like', "%{$performaInvoiceNumber}%");
+            })
+            ->when($currencyType, function ($query, $currencyType) {
+                return $query->where('currencyType', $currencyType);
+            })->when($dateOfApplication, function ($query, $dateOfApplication) {
+                return $query->whereDate('dateOfApplication', $dateOfApplication);
+            })->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                return $query->whereBetween('dateOfApplication', [$startDate, $endDate]);
+            })
+            ->get();
+
+        return view('fcy-request.allFcyRequests', compact('allFcyRequest', 'branchs'));
     }
 
     public function unAuthFcyRequests()

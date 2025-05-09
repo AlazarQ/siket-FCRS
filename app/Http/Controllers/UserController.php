@@ -132,11 +132,11 @@ class UserController extends Controller
     public function authorizeUser(Request $request, User $user)
     {
         try {
-            if ($user->createdBy !== Auth::id()) {
+            if ($user->createdBy !== Auth::user()->userName) {
                 if (Auth::user()->userRole === 'ADMIN' || Auth::user()->userRole === 'MANAGER') {
                     $updated = $user->update([
                         'recordStatus' => 'ACTIVE',
-                        'modifiedBy' => Auth::id(),
+                        'modifiedBy' => Auth::user()->userName,
                     ]);
 
                     if (!$updated) {
@@ -144,11 +144,16 @@ class UserController extends Controller
                     }
 
                     // Assume you have stored a temporary plain password (from registration)
-                    $plainPassword = $user->temp_password ?? 'N/A'; // Replace with actual logic
+                    $password = $user->password ?? 'N/A'; // Replace with actual logic
 
                     // Send email
-                    Mail::to($user->email)->send(new UserAuthorizedMail($user, $plainPassword));
-
+                    try {
+                        Mail::to($user->email)->send(new UserAuthorizedMail($user, $password));
+                    } catch (\Exception $e) {
+                        Log::error('Error While Sending email : ' . $e->getMessage(), [
+                            'exception' => $e
+                        ]);
+                    }
                     return redirect()->route('users.index')
                         ->with('success', "<script>showNotification('User', 'User Authorized Successfully','success')</script>");
                 } else {
@@ -164,7 +169,7 @@ class UserController extends Controller
                 'exception' => $e
             ]);
             return redirect()->back()
-                ->with('error', "<script>showNotification('User', 'User Authorization Failed ','error')</script>");
+                ->with('error', "<script>showNotification('User', 'User Authorization Failed : {$e->getMessage()} ','error')</script>");
         }
     }
 
@@ -175,8 +180,8 @@ class UserController extends Controller
     {
         try {
             if (
-                $user->createdBy !== Auth::id() &&
-                (Auth::id() === 'ADMIN' || Auth::id() === 'MANAGER')
+                $user->createdBy !== Auth::user()->userName &&
+                (Auth::user()->userRole === 'ADMIN' || Auth::user()->userRole === 'MANAGER')
             ) {
 
                 $user->delete();

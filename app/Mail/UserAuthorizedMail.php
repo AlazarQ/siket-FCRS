@@ -11,17 +11,17 @@ class UserAuthorizedMail extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
-    public $plainPassword;
+    public $password;
 
-    public function __construct($user, $plainPassword)
+    public function __construct($user, $password)
     {
         $this->user = $user;
-        $this->plainPassword = $plainPassword;
+        $this->password = $password;
     }
 
     public function build()
     {
-        return $this->subject('Your Account Has Been Authorized')
+        return $this->subject('User Access - FCRS')
             ->view('emails.user_authorized');
     }
 }

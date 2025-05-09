@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Access Granted - FCRS</title>
+    <title>FCY Request Registration - Approval</title>
 </head>
 <body>
-    <p>Hello {{ $user->name }},</p>
+    <p>Hello Admin,</p>
 
-    <p>Your account has been authorized. Here are your credentials:</p>
+    <p>New FCY Request Registerd</p>
 
     <ul>
-        <li><strong>Username:</strong> {{ $user->name }}</li>
-        <li><strong>Email:</strong> {{ $user->email }}</li>
-        <li><strong>Password:</strong> {{ $plainPassword }}</li>
+        <li><strong>Applicant Name:</strong> {{ $fcyRequest->applicantName }}</li>
+        <li><strong>Applicant NBE Account:</strong> {{ $fcyRequest->NBEAccountNumber }}</li>
+        <li><strong>Performa Invoice Numnber:</strong> {{ $fcyRequest->performaInvoiceNumber }}</li>
     </ul>
 
-    <p>Please log in and change your password immediately.</p>
-    <p><img src="{{ asset('images/emailFooter.png') }}" alt="Email Footer" style="width:100%; max-width:100%;"></p>
-    <p>Thank you,<br>The Team</p>
+    <p>Please log in and See the datails on the system.</p>
+    <img src="{{ asset('images/emailFooter.png') }}" alt="Email Footer"/>
+    <p>Thank you,<br>Siket IBD Team</p>
 </body>
 </html>
