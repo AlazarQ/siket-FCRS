@@ -26,8 +26,6 @@
             <p class="mt-3 mb-6 text-green-900/80 text-sm">
                 Reject FCY Request based on the details (Reject FCY Request Allocation).
             </p>
-            {{-- @csrf
-            @method('PUT') --}}
             <x-bladewind::card title="General Details">
                 <x-bladewind::input name="idReference" readonly="true" label="Id Reference"
                     value="{{ $fCY_Request->idReference ?? '' }}" />

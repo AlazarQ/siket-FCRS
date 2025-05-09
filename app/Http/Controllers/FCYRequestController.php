@@ -103,7 +103,7 @@ class FCYRequestController extends Controller
             }
             $data['recordStatusRegistration'] = 'INAU'; // Set default record status
 
-            $data['createdBy'] = Auth::id();
+            $data['createdBy'] = Auth::user()->userName;
             // file upload handling
 
             // Save the FCY_Request instance to the database
@@ -257,7 +257,7 @@ class FCYRequestController extends Controller
             $data['recordStatusRegistration'] = 'INAU';
             $data['recordStatusAllocation'] = '';
 
-            $data['updatedBy'] = Auth::id();
+            $data['updatedBy'] = Auth::user()->userName;
             // file upload handling
 
             // Save the FCY_Request instance to the database
@@ -292,18 +292,14 @@ class FCYRequestController extends Controller
     public function authorizeRequest($id)
     {
 
-
-        // Find the request by ID
         $fcyRequest = FCY_Request::findOrFail($id);
-        // Update the record status to 'AUTH'
-        //check if the authorizer is the same user
         if ($fcyRequest->createdBy !== Auth::id()) {
             if (Auth::user()->userRole !== 'OFFICER' || Auth::user()->userRole !== 'ADMIN') {
                 return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Only OFFICER role can authorize requests', 'error')</script>");
             }
             $fcyRequest->recordStatusRegistration = 'AUTH';
             $fcyRequest->recordStatusAllocation = 'UNAPPROVED'; /// update the status as un approved
-            $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
+            $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
             $fcyRequest->save();
             // Redirect back with a success message
             return redirect()->route('fcy-request.listUnauthorizedRequests')
@@ -321,7 +317,7 @@ class FCYRequestController extends Controller
         $fcyRequest = FCY_Request::findOrFail($id);
         // Update the record status to 'REJCT'
         $fcyRequest->recordStatusRegistration = 'REJCT';
-        $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
+        $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
         $fcyRequest->save();
         // Redirect back with a success message
         return redirect()->route('fcy-request.listUnauthorizedRequests')
@@ -346,7 +342,7 @@ class FCYRequestController extends Controller
         $fcyRequest = FCY_Request::findOrFail($id);
         // Update the record status to 'APPROVED'
         $fcyRequest->recordStatusAllocation = 'APPROVED';
-        $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
+        $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
         $fcyRequest->save();
         // Redirect back with a success message
         return redirect()->route('fcy-request.listAuthorizedRequests')
@@ -359,7 +355,7 @@ class FCYRequestController extends Controller
         $fcyRequest = FCY_Request::findOrFail($id);
         // Update the record status to 'REJCT'
         $fcyRequest->recordStatusAllocation = 'REJCT';
-        $fcyRequest->updatedBy = Auth::id(); // Set the updatedBy field to the current user's ID
+        $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
         $fcyRequest->save();
         // Redirect back with a success message
         return redirect()->route('fcy-request.listAuthorizedRequests')

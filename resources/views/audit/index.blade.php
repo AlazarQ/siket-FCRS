@@ -35,12 +35,12 @@
             <div class="overflow-x-auto">
                 <x-bladewind::table selectable="flase" divider="thin" name="branch_list" searchable="true"
                     celled="false" paginated="true" page_size="5" show_row_numbers="true" default_page="1"
-                     no_data_message="Audit log is empty !!!"
-                    message_as_empty_state="true">
+                    no_data_message="Audit log is empty !!!" message_as_empty_state="true">
                     <x-slot:header>
                         <td class="border px-4 py-2">Rec ID</td>
                         <td class="border px-4 py-2">User ID</td>
                         <td class="border px-4 py-2">Event</td>
+                        <td class="border px-4 py-2">Table</td>
                         <td class="border px-4 py-2">Old Values</td>
                         <td class="border px-4 py-2">New Values</td>
                         <td class="border px-4 py-2">Ip Address</td>
@@ -52,6 +52,7 @@
                             <td class="border px-4 py-2">{{ $audit->id }}</td>
                             <td class="border px-4 py-2">{{ $audit->user_id }}</td>
                             <td class="border px-4 py-2">{{ $audit->event }}</td>
+                            <td class="border px-4 py-2">{{ $audit->auditable_type }}</td>
 
                             <!-- Old Values with Modal Trigger -->
                             <td class="border px-4 py-2 max-w-[200px] truncate cursor-pointer">

@@ -18,7 +18,7 @@
     <x-bladewind.card>
 
         <form id="fcy-request-form" class="request-form-update" action="{{ route('fcy-request.reject', $fCY_Request) }}"
-            method="post" enctype="multipart/form-data">
+            method="" enctype="multipart/form-data">
 
 
             <h1 class="my-2 text-4xl font-light text-green-900/80"><b>View FCY Request - Reject</b></h1>

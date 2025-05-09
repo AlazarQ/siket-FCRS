@@ -8,9 +8,10 @@ use App\Models\Branch;
 use App\Models\District;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
+use App\Mail\UserAuthorizedMail;
+use Illuminate\Support\Facades\Mail;
 
 
 class UserController extends Controller
@@ -131,43 +132,39 @@ class UserController extends Controller
     public function authorizeUser(Request $request, User $user)
     {
         try {
-            // Add debug logging
-            Log::info('Attempting to update user', [
-                'user_id' => $user->id,
-                'current_status' => $user->recordStatus,
-                'new_status' => ''
-            ]);
-            $userId = $user->id;
-            // $updated = $user->update(['recordStatus' => '']);
-            //check if the authorizer is the same user
             if ($user->createdBy !== Auth::id()) {
                 if (Auth::user()->userRole === 'ADMIN' || Auth::user()->userRole === 'MANAGER') {
-                    $updated = User::where('id', $userId)
-                        ->update(['recordStatus' => 'ACTIVE', 'modifiedBy' => Auth::id()]);
+                    $updated = $user->update([
+                        'recordStatus' => 'ACTIVE',
+                        'modifiedBy' => Auth::id(),
+                    ]);
 
                     if (!$updated) {
                         throw new \Exception('Update query returned false');
                     }
 
-                    // Refresh to verify update
-                    $user->refresh();
-                    Log::info('After update', [
-                        'new_status' => $user->recordStatus
-                    ]);
+                    // Assume you have stored a temporary plain password (from registration)
+                    $plainPassword = $user->temp_password ?? 'N/A'; // Replace with actual logic
 
-                    return redirect()->route('users.index')->with('success', "<script>showNotification('User', 'User Authorized Successfully','success')</script>");
+                    // Send email
+                    Mail::to($user->email)->send(new UserAuthorizedMail($user, $plainPassword));
+
+                    return redirect()->route('users.index')
+                        ->with('success', "<script>showNotification('User', 'User Authorized Successfully','success')</script>");
                 } else {
-                    return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Insufficient Privilages !!!', 'error')</script>");
+                    return redirect()->back()
+                        ->with('error', "<script>showNotification('Request Authorization', 'Insufficient Privileges !!!', 'error')</script>");
                 }
             } else {
-
-                return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Maker and Checker couldn't be Same !!!', 'error')</script>");
+                return redirect()->back()
+                    ->with('error', "<script>showNotification('Request Authorization', 'Maker and Checker couldn’t be Same !!!', 'error')</script>");
             }
         } catch (\Exception $e) {
             Log::error('Error authorizing user: ' . $e->getMessage(), [
                 'exception' => $e
             ]);
-            return redirect()->back()->with('error', "<script>showNotification('User', 'User Authorization Failed ','error')</script>");
+            return redirect()->back()
+                ->with('error', "<script>showNotification('User', 'User Authorization Failed ','error')</script>");
         }
     }
 
