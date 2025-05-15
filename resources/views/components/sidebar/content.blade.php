@@ -26,8 +26,11 @@
 
                 <x-sidebar.sublink title="Request Registration" href="{{ route('fcy-request.create') }}" :active="request()->routeIs('fcy-request.create')" />
 
-                <x-sidebar.sublink title="Approve Request (Registration)"
+                <x-sidebar.sublink title="Verify Request (Registration)"
                     href="{{ route('fcy-request.listUnauthorizedRequests') }}" :active="request()->routeIs('fcy-request.listUnauthorizedRequests')" />
+
+                <x-sidebar.sublink title="Authorize Request (Registration 2)"
+                    href="{{ route('fcy-request.listUnauthorizedRequests2') }}" :active="request()->routeIs('fcy-request.listUnauthorizedRequests2')" />
 
                 <x-sidebar.sublink title="Approve Request (Allocation)" href="{{ route('fcy-request.listAuthorizedRequests') }}"
                     :active="request()->routeIs('fcy-request.listAuthorizedRequests')" />
@@ -106,7 +109,7 @@
 
                 <x-sidebar.sublink title="Request Registration" href="{{ route('fcy-request.create') }}" :active="request()->routeIs('fcy-request.create')" />
 
-                <x-sidebar.sublink title="Approve Request (Registration)"
+                <x-sidebar.sublink title="Verify Request (Registration)"
                     href="{{ route('fcy-request.listUnauthorizedRequests') }}" :active="request()->routeIs('fcy-request.listUnauthorizedRequests')" />
 
                 <x-sidebar.sublink title="Request Lists " href="{{ route('fcy-request.index') }}" :active="request()->routeIs('fcy-request.index')" />
@@ -142,7 +145,7 @@
                     <x-icons.forex class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
                 </x-slot>
 
-                <x-sidebar.sublink title="Approve Request (Registration)"
+                <x-sidebar.sublink title="Verify Request (Registration)"
                     href="{{ route('fcy-request.listUnauthorizedRequests') }}" :active="request()->routeIs('fcy-request.listUnauthorizedRequests')" />
 
                 <x-sidebar.sublink title="Approve Request (Allocation)"
@@ -181,8 +184,8 @@
                     <x-icons.forex class="flex-shrink-0 w-6 h-6" aria-hidden="true" />
                 </x-slot>
 
-                <x-sidebar.sublink title="Approve Request (Registration)"
-                    href="{{ route('fcy-request.listUnauthorizedRequests') }}" :active="request()->routeIs('fcy-request.listUnauthorizedRequests')" />
+                <x-sidebar.sublink title="Authorize Request (Registration 2)"
+                    href="{{ route('fcy-request.listUnauthorizedRequests2') }}" :active="request()->routeIs('fcy-request.listUnauthorizedRequests2')" />
 
                 <x-sidebar.sublink title="Approve Request (Allocation)"
                     href="{{ route('fcy-request.listAuthorizedRequests') }}" :active="request()->routeIs('fcy-request.listAuthorizedRequests')" />

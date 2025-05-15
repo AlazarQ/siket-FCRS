@@ -105,7 +105,7 @@ class FCYRequestController extends Controller
             } else {
                 $data['requestFiles'] = null; // Set to null if no file is uploaded
             }
-            $data['recordStatusRegistration'] = 'INAU'; // Set default record status
+            $data['recordStatusRegistration'] = 'INAU-1'; // Set default record status
 
             $data['createdBy'] = Auth::user()->userName;
             // file upload handling
@@ -180,6 +180,21 @@ class FCYRequestController extends Controller
             ->get();
         return view('fcy-request.showAuthReg', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
     }
+    /// 2nd authorization list
+    public function showAuthReg2(FCY_Request $fCY_Request)
+    {
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        $currencyList = Currencies::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        return view('fcy-request.showAuthReg2', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
+    }
 
     public function showRejectedAlloc(FCY_Request $fCY_Request)
     {
@@ -213,6 +228,22 @@ class FCYRequestController extends Controller
         return view('fcy-request.showRejectReg', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
     }
 
+    /// 2nd authorization rejection 
+    public function showRejectReg2(FCY_Request $fCY_Request)
+    {
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        $currencyList = Currencies::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $modeOfPaymentsList = ModeOfPayments::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+        $incotermsList = incoterms::select('description as label', 'shortCode as value')
+            ->where('status', 'ACTIVE')
+            ->get();
+
+        return view('fcy-request.showRejectReg2', compact('fCY_Request', 'branchs', 'currencyList', 'modeOfPaymentsList', 'incotermsList'));
+    }
     /**
      * Show the form for editing the specified resource.
      */
@@ -273,7 +304,7 @@ class FCYRequestController extends Controller
             } else {
                 $data['requestFiles'] = $fCY_Request->requestFiles; // Set to null if no file is uploaded
             }
-            $data['recordStatusRegistration'] = 'INAU';
+            $data['recordStatusRegistration'] = 'INAU-1';
             $data['recordStatusAllocation'] = '';
 
             $data['updatedBy'] = Auth::user()->userName;
@@ -304,21 +335,66 @@ class FCYRequestController extends Controller
     {
         $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
         // Fetch all unauthorized FCY_Request records from the database
-        $fcyRequests = FCY_Request::where('recordStatusRegistration', 'INAU')->get();
+        $fcyRequests = FCY_Request::where('recordStatusRegistration', 'INAU-1')->get();
         // Pass the records to the view
         return view('fcy-request.listUnauthorizedRequests', compact('fcyRequests'));
+    }
+
+    public function listUnauthorizedRequests2()
+    {
+        $branchs = Branch::select('branchName as label', 'branchCode as value')->get();
+        // Fetch all unauthorized FCY_Request records from the database
+        $fcyRequests = FCY_Request::where('recordStatusRegistration', 'AUTH-1')->get();
+        // Pass the records to the view
+        return view('fcy-request.listUnauthorizedRequests2', compact('fcyRequests'));
     }
     public function authorizeRequest($id)
     {
 
         $fcyRequest = FCY_Request::findOrFail($id);
-        if ($fcyRequest->createdBy !== Auth::id()) {
+        if ($fcyRequest->createdBy !== Auth::user()->userName) {
             if (Auth::user()->userRole !== 'OFFICER' && Auth::user()->userRole !== 'ADMIN') {
                 return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Only OFFICER role can authorize requests', 'error')</script>");
+            }
+            $fcyRequest->recordStatusRegistration = 'AUTH-1';
+            $fcyRequest->recordStatusAllocation = 'UNAPPROVED'; /// update the status as un approved
+            $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
+            $fcyRequest->verifiedBy = Auth::user()->userName;
+            $fcyRequest->save();
+            // // Send email
+            // try {
+            //     $recipients = DB::table('users')
+            //         ->whereIn('userRole', ['ADMIN', 'MANAGER'])
+            //         ->pluck('email')
+            //         ->toArray();
+
+            //     Mail::to($recipients)->send(new FCYRequestApproval($fcyRequest));
+            // } catch (\Exception $e) {
+            //     Log::error('Error While FCY Request registration approval : ' . $e->getMessage(), [
+            //         'exception' => $e
+            //     ]);
+            // }
+            // Redirect back with a success message
+            return redirect()->route('fcy-request.listUnauthorizedRequests')
+                ->with('success', "<script>showNotification('FCY Request', 'Request Authorized Successfully')</script>");
+        } else {
+            return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Maker and Checker User is the Same', 'error')</script>");
+        }
+    }
+
+    /// 2nd authorization auth
+    public function authorizeRequest2($id)
+    {
+
+        $fcyRequest = FCY_Request::findOrFail($id);
+        if ($fcyRequest->createdBy !== Auth::user()->userName) {
+            if (Auth::user()->userRole === 'ADMIN' && Auth::user()->userRole !== 'MANAGER') {
+                return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Only MANAGER/ADMIN role can authorize requests', 'error')</script>");
             }
             $fcyRequest->recordStatusRegistration = 'AUTH';
             $fcyRequest->recordStatusAllocation = 'UNAPPROVED'; /// update the status as un approved
             $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
+            $fcyRequest->authorizedBy = Auth::user()->userName;
             $fcyRequest->save();
             // Send email
             try {
@@ -334,7 +410,7 @@ class FCYRequestController extends Controller
                 ]);
             }
             // Redirect back with a success message
-            return redirect()->route('fcy-request.listUnauthorizedRequests')
+            return redirect()->route('fcy-request.listUnauthorizedRequests2')
                 ->with('success', "<script>showNotification('FCY Request', 'Request Authorized Successfully')</script>");
         } else {
             return redirect()->back()->with('error', "<script>showNotification('Request Authorization', 'Maker and Checker User is the Same', 'error')</script>");
@@ -370,11 +446,15 @@ class FCYRequestController extends Controller
 
     public function authorizeRequestAllocation($id)
     {
+        if (Auth::user()->userRole !== 'ADMIN' && Auth::user()->userRole !== 'MANAGER') {
+            return redirect()->back()->with('error', "<script>showNotification('Request Allocation', 'Only Manager/Admin role can authorize requests', 'error')</script>");
+        }
         // Find the request by ID
         $fcyRequest = FCY_Request::findOrFail($id);
         // Update the record status to 'APPROVED'
         $fcyRequest->recordStatusAllocation = 'APPROVED';
         $fcyRequest->updatedBy = Auth::user()->userName; // Set the updatedBy field to the current user's ID
+        // $fcyRequest->authorizedBy = Auth::user()->userName;
         $fcyRequest->save();
 
         // Send email
@@ -458,14 +538,14 @@ class FCYRequestController extends Controller
 
     public function approvedFcyRequests()
     {
-        $approvedFcyRequests = FCY_Request::where('applicationStatus', 'APPROVED')->get();
+        $approvedFcyRequests = FCY_Request::where('recordStatusAllocation', 'APPROVED')->get();
         return view('fcy-request.approvedFcyRequests', compact('approvedFcyRequests'));
     }
 
     public function rejectedFcyRequests()
     {
         $rejectedFcyRequestsRegistration = FCY_Request::where('recordStatusRegistration', 'REJCT')->get();
-        $rejectedFcyRequestsApplication = FCY_Request::where('applicationStatus', 'REJECTED')->get();
+        $rejectedFcyRequestsApplication = FCY_Request::where('recordStatusAllocation', 'REJECTED')->get();
         return view('fcy-request.rejectedFcyRequests', compact('rejectedFcyRequestsRegistration', 'rejectedFcyRequestsApplication'));
     }
 

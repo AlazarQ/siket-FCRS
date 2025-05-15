@@ -56,8 +56,11 @@ Route::middleware('auth')->group(function () {
 
     ///////// route to list all unauthorized (Registration) requests
     Route::get('/fcy-request/list-unauthorized', [FCYRequestController::class, 'listUnauthorizedRequests'])->name('fcy-request.listUnauthorizedRequests');
+    Route::get('/fcy-request/list-unauthorized2', [FCYRequestController::class, 'listUnauthorizedRequests2'])->name('fcy-request.listUnauthorizedRequests2');
     Route::get('/fcy-request/authorize/{id}', [FCYRequestController::class, 'authorizeRequest'])->name('fcy-request.authorize');
+    Route::get('/fcy-request/authorize/2nd/{id}', [FCYRequestController::class, 'authorizeRequest2'])->name('fcy-request.authorize2');
     Route::get('/fcy-request/reject/{id}', [FCYRequestController::class, 'rejectRequest'])->name('fcy-request.reject');
+    Route::get('/fcy-request/reject2/{id}', [FCYRequestController::class, 'rejectRequest2'])->name('fcy-request.reject2');
 
     ///////// route to list all unauthorized (Allocation) requests
     Route::get('/fcy-request/list-AuthorizedRequests', [FCYRequestController::class, 'listAuthorizedRequests'])->name('fcy-request.listAuthorizedRequests');
@@ -106,16 +109,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/rejectedFcyRequests', [FCYRequestController::class, 'rejectedFcyRequests'])
         ->name('fcy-request.rejectedFcyRequests');
 
-
-
-
-
     ///// Routes for request authorization and rejection
     Route::get('/fcy-request/{fCY_Request}/showAuthAlloc', [FCYRequestController::class, 'showAuthAlloc'])->name('fcy-request.showAuthAlloc');
     Route::get('/fcy-request/{fCY_Request}/showAuthReg', [FCYRequestController::class, 'showAuthReg'])->name('fcy-request.showAuthReg');
+    Route::get('/fcy-request/{fCY_Request}/showAuthReg2', [FCYRequestController::class, 'showAuthReg2'])->name('fcy-request.showAuthReg2');
     Route::get('/fcy-request/{fCY_Request}/showRejectedAlloc', [FCYRequestController::class, 'showRejectedAlloc'])->name('fcy-request.showRejectedAlloc');
     Route::get('/fcy-request/{fCY_Request}/showRejectReg', [FCYRequestController::class, 'showRejectReg'])->name('fcy-request.showRejectReg');
-
+    Route::get('/fcy-request/{fCY_Request}/showRejectReg2', [FCYRequestController::class, 'showRejectReg2'])->name('fcy-request.showRejectReg2');
     Route::get('/fcy-request/{fCY_Request}/show', [FCYRequestController::class, 'show'])->name('fcy-request.show');
 
 

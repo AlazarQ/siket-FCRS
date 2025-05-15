@@ -44,7 +44,9 @@ class FCY_Request extends Authenticatable implements AuditableContract
         'recordStatusAllocation' ,
         'requestRemarks',
         'requestFiles',
-        'createdBy', // user who created the request
+        'createdBy', // user who registers the request
+        'verifiedBy', // user who verifies the request (1st AUTH-1)
+        'authorizedBy', // user who authorizes the request (2nd AUTH-2)
         'updatedBy', // user who updated the request
         'created_at',
         'updated_at',

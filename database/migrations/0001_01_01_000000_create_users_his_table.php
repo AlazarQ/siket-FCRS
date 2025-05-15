@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('userRole')->nullable();
             $table->string('remark')->nullable();
             $table->string('createdBy')->nullable();
+            $table->string('modifiedBy')->nullable();
             $table->rememberToken()->nullable();
             $table->timestamps();
         });
